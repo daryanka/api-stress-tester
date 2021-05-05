@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-	"math"
 	"net/http"
 	"os"
 	"reflect"
@@ -77,7 +76,6 @@ func NewUnAuthorized(message string, types ...string) RestErrI {
 	}
 }
 
-
 func InitLogger() {
 	logPath := os.Getenv("LOG_PATH")
 	mode := os.Getenv("MODE")
@@ -127,8 +125,8 @@ func GinShouldValidate(data interface{}) func(c *gin.Context) bool {
 func GinShouldBindJSON(data interface{}) func(c *gin.Context) bool {
 	return func(c *gin.Context) bool {
 		if err := c.ShouldBindJSON(&data); err != nil {
-			e := RestErr.NewError(http.StatusUnprocessableEntity, "Invalid JSON body")
-			c.JSON(e.StatusCode, e)
+			e := NewUnprocessableEntity("There was an issue making the request, please try again later.", "INVALID_JSON")
+			c.JSON(e.Code(), e)
 			return false
 		}
 		return true
@@ -138,8 +136,8 @@ func GinShouldBindJSON(data interface{}) func(c *gin.Context) bool {
 func GinShouldBindFormData(data interface{}) func(c *gin.Context) bool {
 	return func(c *gin.Context) bool {
 		if err := c.Bind(data); err != nil {
-			e := RestErr.NewError(http.StatusUnprocessableEntity, "Invalid form data")
-			c.JSON(e.StatusCode, e)
+			e := NewUnprocessableEntity("There was an issue making the request, please try again later.", "INVALID_FORM_DATA")
+			c.JSON(e.Code(), e)
 			return false
 		}
 		return true
@@ -227,28 +225,4 @@ func CreateAuthToken(userID int64) (*TokenWithClaims, error) {
 		Expires:   customClaims.StandardClaims.ExpiresAt,
 		ExpiresIn: 3600,
 	}, err
-}
-
-
-
-func ErrorLogger(e error) {
-	if e == nil {
-		return
-	}
-	fmt.Printf("Timestamp: %v \nError: %v", time.Now(), e.Error())
-	f, err := os.OpenFile("error_log.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return
-	}
-	str := fmt.Sprintf("Timestamp: %v \nError: %v \n", time.Now(), e.Error())
-	_, _ = f.WriteString(str)
-	f.Close()
-}
-
-func CalculateReadTime(text string) *int {
-	p := bluemonday.StrictPolicy()
-	text = p.Sanitize(text)
-	// Average person reads 200-250 words per minute
-	readTime := int(math.Ceil(float64(len(text)) / 200))
-	return &readTime
 }

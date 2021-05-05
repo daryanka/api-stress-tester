@@ -2,29 +2,29 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/daryanka/api-stress-tester/api/domains/users"
 	"github.com/daryanka/api-stress-tester/api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"os"
 	"strings"
 )
 
 const bearer = "bearer"
 
-var authorized = utils.NewUnAuthorized("Unauthorized", "EXPIRED_TOKEN")
+var unauthorized = utils.NewUnAuthorized("Unauthorized", "EXPIRED_TOKEN")
 
 func ValidateAuthToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, authorized)
+			c.JSON(unauthorized.Code(), unauthorized)
 			c.Abort()
 			return
 		}
 
 		if len(authHeader) < len(bearer) {
-			c.JSON(http.StatusUnauthorized, authorized)
+			c.JSON(unauthorized.Code(), unauthorized)
 			c.Abort()
 			return
 		}
@@ -42,23 +42,20 @@ func ValidateAuthToken() gin.HandlerFunc {
 		})
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, authorized)
+			c.JSON(unauthorized.Code(), unauthorized)
 			c.Abort()
 			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			// TODO get user
-			var user users.User
+			id, ok := claims["id"].(int64)
+			if !ok {
+				utils.Logger.Error("id from JWT not able to type assert as int64", claims["id"])
+			}
 
-			err := clients.Client.Table("users").
-				Select("id", "email", "role", "name").
-				Where("id", "=", claims["id"]).
-				First(&user)
-
+			user, err := users.UserDao.Find(id)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, authorized)
-				c.Abort()
+				c.JSON(unauthorized.Code(), unauthorized)
 				return
 			}
 
@@ -66,7 +63,7 @@ func ValidateAuthToken() gin.HandlerFunc {
 			c.Next()
 			return
 		} else {
-			c.JSON(http.StatusUnauthorized, authorized)
+			c.JSON(unauthorized.Code(), unauthorized)
 			c.Abort()
 			return
 		}
