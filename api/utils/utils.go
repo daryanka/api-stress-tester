@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+	"math/rand"
 	"net/http"
 	"os"
 	"reflect"
@@ -225,4 +226,14 @@ func CreateAuthToken(userID int64) (*TokenWithClaims, error) {
 		Expires:   customClaims.StandardClaims.ExpiresAt,
 		ExpiresIn: 3600,
 	}, err
+}
+
+func RandStringRunes(n int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }

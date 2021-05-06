@@ -10,6 +10,8 @@ import (
 type UserDoaI interface {
 	Find(id int64) (u *User, err error)
 	Create(u *User) (id int64, err error)
+	FindByEmail(email string) (u User, err error)
+	EmailInUse(email string) (bool, error)
 }
 
 type userDao struct{}
@@ -22,6 +24,16 @@ func (i *userDao) Find(id int64) (u *User, err error) {
 	err = clients.DB.Get(&u, queryGetUser, key, key, id)
 	if err != nil && err != sql.ErrNoRows {
 		utils.Logger.Error("error fetching user", err)
+	}
+	return
+}
+
+func (i *userDao) FindByEmail(email string) (u User, err error) {
+	key := os.Getenv("ENC_KEY")
+
+	err = clients.DB.Get(&u, queryGetUserByEmail, key, key, key, email)
+	if err != nil && err != sql.ErrNoRows {
+		utils.Logger.Error("error fetching user by email", err)
 	}
 	return
 }
@@ -46,4 +58,21 @@ func (i *userDao) Create(u *User) (id int64, err error) {
 		utils.Logger.Error("error getting created user id", err)
 	}
 	return
+}
+
+func (i *userDao) EmailInUse(email string) (bool, error) {
+	var id int64
+	key := os.Getenv("ENC_KEY")
+
+	err := clients.DB.Get(&id, queryEmailInUse, key, email)
+	if err != nil && err != sql.ErrNoRows {
+		utils.Logger.Error("error getting email in use", err)
+		return false, err
+	}
+
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+
+	return true, nil
 }

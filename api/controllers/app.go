@@ -10,8 +10,8 @@ func StartRouter() *gin.Engine {
 
 	authRoutes := v1.Group("/auth")
 	{
-		authRoutes.POST("/login")
-		authRoutes.POST("/register")
+		authRoutes.POST("/login", UserController.Login)
+		authRoutes.POST("/register", UserController.Register)
 	}
 
 	return r
