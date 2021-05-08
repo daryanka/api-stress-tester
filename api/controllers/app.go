@@ -12,6 +12,7 @@ func StartRouter() *gin.Engine {
 	{
 		authRoutes.POST("/login", UserController.Login)
 		authRoutes.POST("/register", UserController.Register)
+		authRoutes.POST("/verify", UserController.VerifyEmail)
 	}
 
 	return r

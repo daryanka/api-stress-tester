@@ -1,4 +1,4 @@
-package users
+package user
 
 const (
 	queryCreateUser = `INSERT INTO users (name, email, email_token, password) VALUES (AES_ENCRYPT(?, ?), AES_ENCRYPT(?, ?), ?, ?);`
@@ -19,5 +19,5 @@ FROM users WHERE id = ?;`
 	email_verified
 FROM users WHERE AES_DECRYPT(email, ?) = ?;`
 	queryEmailInUse = `SELECT id FROM users WHERE AES_DECRYPT(email, ?) = ?;`
-	queryUpdateEmailVerified = `UPDATE users SET email_verified = ? WHERE id email_token = ?;`
+	queryUpdateEmailVerified = `UPDATE users SET email_verified = ? WHERE email_token = ?;`
 )

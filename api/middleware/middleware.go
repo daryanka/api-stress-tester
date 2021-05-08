@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/daryanka/api-stress-tester/api/domains/users"
+	"github.com/daryanka/api-stress-tester/api/domains/user"
 	"github.com/daryanka/api-stress-tester/api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -53,7 +53,7 @@ func ValidateAuthToken() gin.HandlerFunc {
 				utils.Logger.Error("id from JWT not able to type assert as int64", claims["id"])
 			}
 
-			user, err := users.UserDao.Find(id)
+			user, err := user.UserDao.Find(id)
 			if err != nil {
 				c.JSON(unauthorized.Code(), unauthorized)
 				return
