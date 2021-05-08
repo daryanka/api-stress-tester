@@ -13,9 +13,10 @@ type ReqRegister struct {
 }
 
 type User struct {
-	ID         int64  `json:"id" db:"id"`
-	Name       string `json:"name" db:"name"`
-	Email      string `json:"email" db:"email"`
-	EmailToken string `json:"-" db:"email_token"`
-	Password   string `json:"-" db:"password"`
+	ID            int64  `json:"id" db:"id"`
+	Name          string `json:"name" db:"name"`
+	Email         string `json:"email" db:"email"`
+	EmailToken    string `json:"-" db:"email_token"`
+	Password      string `json:"-" db:"password"`
+	EmailVerified int    `json:"email_verified" db:"email_verified"`
 }

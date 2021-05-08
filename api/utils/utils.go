@@ -24,9 +24,9 @@ type RestErrI interface {
 }
 
 type RestErr struct {
-	Err string `json:"error"`
-	StatusCode int `json:"status_code"`
-	Type string `json:"type,omitempty"`
+	Err        string `json:"error"`
+	StatusCode int    `json:"status_code"`
+	Type       string `json:"type,omitempty"`
 }
 
 func (i *RestErr) Error() string {
@@ -47,6 +47,13 @@ func NewInternalServerError(message string, types ...string) RestErrI {
 		Err:        message,
 		StatusCode: http.StatusInternalServerError,
 		Type:       strings.Join(types, ", "),
+	}
+}
+
+func StandardInternalServerError() RestErrI {
+	return &RestErr{
+		Err:        "Something went wrong, please try again later",
+		StatusCode: http.StatusInternalServerError,
 	}
 }
 
@@ -88,7 +95,7 @@ func InitLogger() {
 		config = zap.NewDevelopmentConfig()
 	}
 
-	config.OutputPaths = []string{logPath}
+	config.OutputPaths = []string{logPath, "stdout"}
 
 	logger, err := config.Build()
 	if err != nil {
@@ -96,7 +103,6 @@ func InitLogger() {
 	}
 	Logger = logger.Sugar()
 }
-
 
 type TokenWithClaims struct {
 	Token     string `json:"token"`

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"fmt"
+	"github.com/daryanka/api-stress-tester/api/utils"
 	"gopkg.in/gomail.v2"
 	"html/template"
 	"os"
@@ -13,16 +14,17 @@ import (
 func SendMail(templateName, to, subject string, data interface{}) {
 	t, err := template.ParseFiles(fmt.Sprintf("templates/%v", templateName))
 	if err != nil {
-
+		utils.Logger.Error("error parsing html file", err)
+		return
 	}
 
 	var buff bytes.Buffer
 
 	err = t.Execute(&buff, data)
-
-	fmt.Println(buff.String())
-
-	return
+	if err != nil {
+		utils.Logger.Error("error executing html file", err)
+		return
+	}
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", "daryanka@hotmail.co.uk")
@@ -37,5 +39,7 @@ func SendMail(templateName, to, subject string, data interface{}) {
 	d := gomail.NewDialer(os.Getenv("SMTP_HOST"), int(port), os.Getenv("SMTP_USERNAME"), os.Getenv("SMTP_PASSWORD"))
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	d.DialAndSend(m)
+	if err = d.DialAndSend(m); err != nil {
+		utils.Logger.Error("error sending email", err)
+	}
 }

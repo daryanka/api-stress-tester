@@ -12,6 +12,7 @@ type UserDoaI interface {
 	Create(u *User) (id int64, err error)
 	FindByEmail(email string) (u User, err error)
 	EmailInUse(email string) (bool, error)
+	VerifyEmail(token string) (bool, error)
 }
 
 type userDao struct{}
@@ -71,6 +72,26 @@ func (i *userDao) EmailInUse(email string) (bool, error) {
 	}
 
 	if err == sql.ErrNoRows {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (i *userDao) VerifyEmail(token string) (bool, error) {
+	res, err := clients.DB.Exec(queryUpdateEmailVerified, 1, token)
+	if err != nil {
+		utils.Logger.Error("error updating email_verified", err)
+		return false, err
+	}
+
+	num, err := res.RowsAffected()
+	if err != nil {
+		utils.Logger.Error("error getting rows affected email_verified", err)
+		return false, err
+	}
+
+	if num == 0 {
 		return false, nil
 	}
 

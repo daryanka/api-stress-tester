@@ -37,7 +37,7 @@ func (u *userController) Login(c *gin.Context) {
 			c.JSON(e.Code(), e)
 			return
 		}
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
@@ -52,7 +52,7 @@ func (u *userController) Login(c *gin.Context) {
 
 	token, err := utils.CreateAuthToken(user.ID)
 	if err != nil {
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
@@ -80,13 +80,13 @@ func (u *userController) Register(c *gin.Context) {
 	inUse, err := users.UserDao.EmailInUse(reqBody.Email)
 
 	if err != nil {
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
 
 	if inUse {
-		e := utils.NewUnprocessableEntity("This email is already associated to an account", "EMAIL_IN_USE")
+		e := utils.NewBadRequest("This email is already associated to an account", "EMAIL_IN_USE")
 		c.JSON(e.Code(), e)
 		return
 	}
@@ -94,7 +94,7 @@ func (u *userController) Register(c *gin.Context) {
 	// Hash Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 11)
 	if err != nil {
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
@@ -102,7 +102,7 @@ func (u *userController) Register(c *gin.Context) {
 	// Generate Email Token
 	EmailToken := utils.RandStringRunes(64)
 
-	id, err := users.UserDao.Create(&users.User{
+	_, err = users.UserDao.Create(&users.User{
 		Name:       reqBody.Name,
 		Email:      reqBody.Email,
 		EmailToken: EmailToken,
@@ -110,22 +110,34 @@ func (u *userController) Register(c *gin.Context) {
 	})
 
 	if err != nil {
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
 
-	// TODO send email
-	go clients.SendMail("templates/register.html", reqBody.Email, "Welcome Email", struct {
+	go clients.SendMail("register.html", reqBody.Email, "Welcome Email", struct {
 		Token string
 	}{EmailToken})
 
-	token, err := utils.CreateAuthToken(id)
-	if err != nil {
-		e := utils.NewInternalServerError("Something went wrong, please try again later")
+	c.JSON(http.StatusOK, NoError{
+		Error:   false,
+		Message: "Successfully created account check inbox for confirmation email",
+	})
+}
+
+
+func VerifyEmail(c *gin.Context) {
+	token := c.Query("token")
+
+	valid, err := users.UserDao.VerifyEmail(token)
+	if err != nil || !valid {
+		e := utils.StandardInternalServerError()
 		c.JSON(e.Code(), e)
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, NoError{
+		Error:   false,
+		Message: "Successfully activated account",
+	})
 }
