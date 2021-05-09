@@ -20,6 +20,7 @@
     "@types/react-dom": "^16.9.8",
     "autoprefixer": "^10.0.0",
     "babel-loader": "^8.1.0",
+    "chokidar": "^3.5.1",
     "cross-env": "^7.0.2",
     "css-loader": "^4.3.0",
     "error-overlay-webpack-plugin": "^0.4.1",
@@ -36,8 +37,7 @@
     "typescript": "^4.2.4",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
-    "chokidar": "^3.5.1"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@types/js-cookie": "^2.2.6",
