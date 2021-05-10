@@ -4,12 +4,15 @@ import "./styles.scss";
 import App from "./Containers/App";
 import {Router} from "react-router-dom";
 import history from "./history";
+import {WebhookProvider} from "./Contexts/WebHookContext";
 
 const RootApp: FC = () => {
   return (
-    <Router history={history}>
-      <App/>
-    </Router>
+    <WebhookProvider>
+      <Router history={history}>
+        <App/>
+      </Router>
+    </WebhookProvider>
   )
 }
 

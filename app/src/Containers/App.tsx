@@ -1,8 +1,18 @@
-import React, {FC} from "react";
+import React, {FC, useState} from "react";
+import {useWebhook} from "../Contexts/WebHookContext";
 
 const App: FC = () => {
+  const {initialiseConnection} = useWebhook()
+
+  const handleConnect = () => {
+    initialiseConnection()
+  }
+
   return (
-    <h1>Typescript Template</h1>
+    <div>
+      <h1>Typescript Template</h1>
+      <button onClick={handleConnect}>Connect</button>
+    </div>
   )
 }
 
