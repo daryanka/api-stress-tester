@@ -8,7 +8,7 @@ import (
 )
 
 type UserDoaI interface {
-	Find(id int64) (u *User, err error)
+	Find(id int64) (u User, err error)
 	Create(u *User) (id int64, err error)
 	FindByEmail(email string) (u User, err error)
 	EmailInUse(email string) (bool, error)
@@ -19,7 +19,7 @@ type userDao struct{}
 
 var UserDao UserDoaI = &userDao{}
 
-func (i *userDao) Find(id int64) (u *User, err error) {
+func (i *userDao) Find(id int64) (u User, err error) {
 	key := os.Getenv("ENC_KEY")
 
 	err = clients.DB.Get(&u, queryGetUser, key, key, id)

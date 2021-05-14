@@ -16,7 +16,17 @@ var unauthorized = utils.NewUnAuthorized("Unauthorized", "EXPIRED_TOKEN")
 
 func ValidateAuthToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.Request.Header.Get("authorization")
+		authorizationHeader := c.GetHeader("authorization")
+		websocketHeader := c.GetHeader("Sec-WebSocket-Protocol")
+
+		var authHeader string
+
+		if  authorizationHeader != "" {
+			authHeader = authorizationHeader
+		} else {
+			authHeader = "Bearer " + websocketHeader
+		}
+
 		if authHeader == "" {
 			c.JSON(unauthorized.Code(), unauthorized)
 			c.Abort()
@@ -48,18 +58,18 @@ func ValidateAuthToken() gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			id, ok := claims["id"].(int64)
+			id, ok := claims["id"].(float64)
 			if !ok {
-				utils.Logger.Error("id from JWT not able to type assert as int64", claims["id"])
+				utils.Logger.Error("id from JWT not able to type assert as int64 ", claims["id"])
 			}
 
-			user, err := user.UserDao.Find(id)
+			u, err := user.UserDao.Find(int64(id))
 			if err != nil {
 				c.JSON(unauthorized.Code(), unauthorized)
 				return
 			}
 
-			c.Set("user", user)
+			c.Set("user", u)
 			c.Next()
 			return
 		} else {

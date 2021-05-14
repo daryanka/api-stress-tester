@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/daryanka/api-stress-tester/api/utils"
+	"github.com/daryanka/api-stress-tester/api/websocket_conn"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -25,12 +26,10 @@ func (i *webSocketController) Connect(c *gin.Context) {
 		},
 	}
 
-	h := c.GetHeader("Sec-WebSocket-Protocol")
+	u := GetAuthUser(c)
 
 	conn, err := w.Upgrade(c.Writer, c.Request, http.Header{
-		"Sec-WebSocket-Protocol": []string{
-			h,
-		},
+		"Sec-WebSocket-Protocol": []string{c.GetHeader("Sec-WebSocket-Protocol")},
 	})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -38,6 +37,28 @@ func (i *webSocketController) Connect(c *gin.Context) {
 		c.JSON(e.Code(), e)
 		return
 	}
-	r := conn.Subprotocol()
-	fmt.Print("sub proto call is ", r)
+
+	go websocket_conn.HandleAddConnection(conn, u.ID)
+}
+
+func handleConn(conn *websocket.Conn) {
+	for {
+		mt, message, err := conn.ReadMessage()
+		fmt.Println("messageType: ", mt)
+		fmt.Println("message: ", string(message))
+
+		if err != nil {
+			if mt == -1 {
+				// TODO  close websocket / remove from existing
+				break
+			}
+			utils.Logger.Error("error reading message", err)
+			break
+		}
+		err = conn.WriteMessage(mt, []byte("bye world"))
+		if err != nil {
+			utils.Logger.Error("error writing message", err)
+			break
+		}
+	}
 }

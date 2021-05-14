@@ -219,7 +219,8 @@ func CreateAuthToken(userID int64) (*TokenWithClaims, error) {
 	customClaims := JWTClaims{
 		ID: userID,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: timeNow.Unix() + 3600,
+			//ExpiresAt: timeNow.Unix() + 3600,
+			ExpiresAt: timeNow.Unix() + 10000000,
 			IssuedAt:  timeNow.Unix(),
 			Issuer:    "journal_api",
 		},

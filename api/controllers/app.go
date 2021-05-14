@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/daryanka/api-stress-tester/api/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -21,9 +22,8 @@ func StartRouter() *gin.Engine {
 			authRoutes.POST("/verify", UserController.VerifyEmail)
 		}
 
-		v1.GET("/ws", WebSocketController.Connect)
+		v1.GET("/ws", middleware.ValidateAuthToken(), WebSocketController.Connect)
 	}
-
 
 	return r
 }
