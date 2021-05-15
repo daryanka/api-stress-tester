@@ -22,6 +22,15 @@ func StartRouter() *gin.Engine {
 			authRoutes.POST("/verify", UserController.VerifyEmail)
 		}
 
+		domainRoutes := v1.Group("/domains", middleware.ValidateAuthToken())
+		{
+			domainRoutes.GET("/all")
+			domainRoutes.POST("/new")
+			domainRoutes.POST("/confirm")
+			domainRoutes.DELETE("/remove")
+		}
+
+		// Websocket Connection
 		v1.GET("/ws", middleware.ValidateAuthToken(), WebSocketController.Connect)
 	}
 
