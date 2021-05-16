@@ -24,10 +24,10 @@ func StartRouter() *gin.Engine {
 
 		domainRoutes := v1.Group("/domains", middleware.ValidateAuthToken())
 		{
-			domainRoutes.GET("/all")
-			domainRoutes.POST("/new")
-			domainRoutes.POST("/confirm")
-			domainRoutes.DELETE("/remove")
+			domainRoutes.GET("/all", DomainController.All)
+			domainRoutes.POST("/create", DomainController.Create)
+			domainRoutes.POST("/confirm", DomainController.Confirm)
+			domainRoutes.DELETE("/remove", DomainController.Remove)
 		}
 
 		// Websocket Connection

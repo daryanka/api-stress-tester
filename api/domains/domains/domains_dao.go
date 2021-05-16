@@ -7,7 +7,10 @@ import (
 )
 
 type DomainsDaoI interface {
-
+	GetAll(userID int64) (res []Domain, err error)
+	Create(domain *CreateDomain) (int64, error)
+	VerifyToken(id int64) error
+	Delete(id, userId int64) error
 }
 
 type domainsDao struct{}
@@ -24,15 +27,20 @@ func (d *domainsDao) GetAll(userID int64) (res []Domain, err error) {
 	return
 }
 
-func (d *domainsDao) Create(domain *CreateDomain) error {
-	_, err := clients.DB.Exec(queryAddDomain, domain.DomainURL, domain.Token, domain.Verified, domain.UserID)
+func (d *domainsDao) Create(domain *CreateDomain) (int64, error) {
+	res, err := clients.DB.Exec(queryAddDomain, domain.DomainURL, domain.Token, domain.Verified, domain.UserID)
 	if err != nil {
 		utils.Logger.Error("error creating domain ", err)
+		return 0, nil
 	}
-	return err
+	id, err := res.LastInsertId()
+	if err != nil {
+		utils.Logger.Error("error getting created domain id ", err)
+	}
+	return id, err
 }
 
-func (d *domainsDao) Confirm(id int64) error {
+func (d *domainsDao) VerifyToken(id int64) error {
 	_, err := clients.DB.Exec(queryVerifyDomain, id)
 	if err != nil {
 		utils.Logger.Error("error verifying domain ", err)
@@ -40,8 +48,8 @@ func (d *domainsDao) Confirm(id int64) error {
 	return err
 }
 
-func (d *domainsDao) Delete(id, user_id int64) error {
-	_, err := clients.DB.Exec(queryDelete, id, user_id)
+func (d *domainsDao) Delete(id, userId int64) error {
+	_, err := clients.DB.Exec(queryDelete, id, userId)
 	if err != nil {
 		utils.Logger.Error("error deleting domain ", err)
 	}

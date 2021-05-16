@@ -9,6 +9,7 @@ type NoError struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Type    string `json:"type,omitempty"`
+	ID      int64  `json:"id,omitempty"`
 }
 
 func GetAuthUser(c *gin.Context) user.User {
