@@ -1,11 +1,12 @@
 package domains
 
 type Domain struct {
-	ID        int64  `json:"id" db:"id"`
-	DomainURL string `json:"domain_url" db:"domain_url"`
-	UserID    int64  `json:"user_id" db:"user_id"`
-	Verified  int    `json:"verified" db:"verified"`
-	Token     string `json:"token" db:"token"`
+	ID          int64  `json:"id" db:"id"`
+	DomainURL   string `json:"domain_url" db:"domain_url"`
+	UserID      int64  `json:"user_id" db:"user_id"`
+	Verified    int    `json:"verified" db:"verified"`
+	Token       string `json:"token" db:"token"`
+	NumRequests int `json:"num_requests" db:"num_requests"`
 }
 
 type CreateDomain struct {
