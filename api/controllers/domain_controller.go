@@ -59,10 +59,16 @@ func (i *domainController) Create(c *gin.Context) {
 }
 
 func (i *domainController) Confirm(c *gin.Context) {
-	id := c.Param("id")
-	idInt, _ := strconv.ParseInt(id, 10, 64)
+	var reqBody domains.TokenVerify
 
-	err := services.DomainService.Verify(idInt)
+	if ok := utils.GinShouldPassAll(c,
+		utils.GinShouldBindJSON(&reqBody),
+		utils.GinShouldValidate(&reqBody),
+	); !ok {
+		return
+	}
+
+	err := services.DomainService.Verify(reqBody.Endpoint, reqBody.ID, GetAuthUser(c).ID)
 
 	if err != nil {
 		c.JSON(err.Code(), err)
@@ -78,7 +84,7 @@ func (i *domainController) Remove(c *gin.Context) {
 
 	user := GetAuthUser(c)
 
-	err := services.DomainService.Delete(user.ID, idInt)
+	err := services.DomainService.Delete(idInt, user.ID)
 
 	if err != nil {
 		c.JSON(err.Code(), err)

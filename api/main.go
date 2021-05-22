@@ -40,12 +40,12 @@ func main() {
 //
 //		fmt.Println("conns", websocket_conn.Hub.Connections)
 //		fmt.Println("writes", websocket_conn.Hub.WriteChannels)
-//		if websocket_conn.Hub.Connections[7] != nil {
-//			for i := 0; i < 10; i++ {
-//				websocket_conn.WriteMessage(7, []byte("hello world"))
-//			}
-//		} else {
-//			fmt.Println("NIL")
-//		}
-//	}
+		//if websocket_conn.Hub.Connections[7] != nil {
+		//	for i := 0; i < 10; i++ {
+		//		websocket_conn.WriteMessage(7, []byte("hello world"))
+		//	}
+		//} else {
+		//	fmt.Println("NIL")
+		//}
+	//}
 //}

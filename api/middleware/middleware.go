@@ -23,8 +23,10 @@ func ValidateAuthToken() gin.HandlerFunc {
 
 		if  authorizationHeader != "" {
 			authHeader = authorizationHeader
-		} else {
+		} else if websocketHeader != "" {
 			authHeader = "Bearer " + websocketHeader
+		} else {
+			authHeader = "Bearer " + c.Query("auth")
 		}
 
 		if authHeader == "" {

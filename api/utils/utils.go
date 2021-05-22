@@ -50,10 +50,11 @@ func NewInternalServerError(message string, types ...string) RestErrI {
 	}
 }
 
-func StandardInternalServerError() RestErrI {
+func StandardInternalServerError(types ...string) RestErrI {
 	return &RestErr{
 		Err:        "Something went wrong, please try again later",
 		StatusCode: http.StatusInternalServerError,
+		Type: strings.Join(types, ", "),
 	}
 }
 
@@ -79,6 +80,15 @@ func NewUnprocessableEntity(message string, types ...string) RestErrI {
 func NewUnAuthorized(message string, types ...string) RestErrI {
 	return &RestErr{
 		Err:        message,
+		StatusCode: http.StatusUnauthorized,
+		Type:       strings.Join(types, ", "),
+	}
+}
+
+// StandardUnauthorized returns RestErrI with a status code of 401 and message Unauthorized
+func StandardUnauthorized(types ...string) RestErrI {
+	return &RestErr{
+		Err:        "Unauthorized",
 		StatusCode: http.StatusUnauthorized,
 		Type:       strings.Join(types, ", "),
 	}

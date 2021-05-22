@@ -27,7 +27,7 @@ func StartRouter() *gin.Engine {
 			domainRoutes.GET("/all", DomainController.All)
 			domainRoutes.POST("/create", DomainController.Create)
 			domainRoutes.POST("/confirm", DomainController.Confirm)
-			domainRoutes.DELETE("/remove", DomainController.Remove)
+			domainRoutes.DELETE("/remove/:id", DomainController.Remove)
 		}
 
 		// Websocket Connection

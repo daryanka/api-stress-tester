@@ -6,7 +6,7 @@ type Domain struct {
 	UserID      int64  `json:"user_id" db:"user_id"`
 	Verified    int    `json:"verified" db:"verified"`
 	Token       string `json:"token" db:"token"`
-	NumRequests int `json:"num_requests" db:"num_requests"`
+	NumRequests int    `json:"num_requests" db:"num_requests"`
 }
 
 type CreateDomain struct {
@@ -14,4 +14,9 @@ type CreateDomain struct {
 	UserID    int64  `json:"user_id"`
 	Token     string `json:"token"`
 	Verified  int    `json:"verified"`
+}
+
+type TokenVerify struct {
+	Endpoint string `json:"endpoint" validate:"required"`
+	ID       int64  `json:"id" validate:"required"`
 }

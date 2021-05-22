@@ -13,7 +13,6 @@ type webSocketData struct {
 
 type HubT struct {
 	Connections map[int64]*websocket.Conn
-
 	WriteChannels map[int64]chan webSocketData
 }
 
@@ -47,8 +46,7 @@ func HandleAddConnection(conn *websocket.Conn, id int64) {
 // READ MESSAGES
 func handleConn(conn *websocket.Conn, id int64) {
 	for {
-		fmt.Println("test")
-		mt, _, err := conn.ReadMessage()
+		mt, msg, err := conn.ReadMessage()
 		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 			closeConnection(id)
 			return
@@ -57,6 +55,7 @@ func handleConn(conn *websocket.Conn, id int64) {
 			closeConnection(id)
 			break
 		}
+		fmt.Println("message: ", string(msg))
 	}
 }
 
