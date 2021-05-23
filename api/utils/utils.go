@@ -23,27 +23,27 @@ type RestErrI interface {
 	ErrType() string
 }
 
-type RestErr struct {
+type restErr struct {
 	Err        string `json:"error"`
 	StatusCode int    `json:"status_code"`
 	Type       string `json:"type,omitempty"`
 }
 
-func (i *RestErr) Error() string {
+func (i *restErr) Error() string {
 	return i.Err
 }
 
-func (i *RestErr) Code() int {
+func (i *restErr) Code() int {
 	return i.StatusCode
 }
 
-func (i *RestErr) ErrType() string {
+func (i *restErr) ErrType() string {
 	return i.Type
 }
 
 // NewInternalServerError returns RestErrI with a status code of 500
 func NewInternalServerError(message string, types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        message,
 		StatusCode: http.StatusInternalServerError,
 		Type:       strings.Join(types, ", "),
@@ -51,7 +51,7 @@ func NewInternalServerError(message string, types ...string) RestErrI {
 }
 
 func StandardInternalServerError(types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        "Something went wrong, please try again later",
 		StatusCode: http.StatusInternalServerError,
 		Type: strings.Join(types, ", "),
@@ -60,7 +60,7 @@ func StandardInternalServerError(types ...string) RestErrI {
 
 // NewBadRequest returns RestErrI with a status code of 400
 func NewBadRequest(message string, types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        message,
 		StatusCode: http.StatusBadRequest,
 		Type:       strings.Join(types, ", "),
@@ -69,7 +69,7 @@ func NewBadRequest(message string, types ...string) RestErrI {
 
 // NewUnprocessableEntity returns RestErrI with a status code of 422
 func NewUnprocessableEntity(message string, types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        message,
 		StatusCode: http.StatusUnprocessableEntity,
 		Type:       strings.Join(types, ", "),
@@ -78,7 +78,7 @@ func NewUnprocessableEntity(message string, types ...string) RestErrI {
 
 // NewUnAuthorized returns RestErrI with a status code of 401
 func NewUnAuthorized(message string, types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        message,
 		StatusCode: http.StatusUnauthorized,
 		Type:       strings.Join(types, ", "),
@@ -87,7 +87,7 @@ func NewUnAuthorized(message string, types ...string) RestErrI {
 
 // StandardUnauthorized returns RestErrI with a status code of 401 and message Unauthorized
 func StandardUnauthorized(types ...string) RestErrI {
-	return &RestErr{
+	return &restErr{
 		Err:        "Unauthorized",
 		StatusCode: http.StatusUnauthorized,
 		Type:       strings.Join(types, ", "),

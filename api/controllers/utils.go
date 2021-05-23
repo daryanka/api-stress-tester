@@ -7,7 +7,7 @@ import (
 
 type NoError struct {
 	Error   bool   `json:"error"`
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 	Type    string `json:"type,omitempty"`
 	ID      int64  `json:"id,omitempty"`
 }

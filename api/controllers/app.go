@@ -30,6 +30,14 @@ func StartRouter() *gin.Engine {
 			domainRoutes.DELETE("/remove/:id", DomainController.Remove)
 		}
 
+		requestRoutes := v1.Group("/requests", middleware.ValidateAuthToken())
+		{
+			requestRoutes.GET("/all", RequestOverviewController.All)
+			requestRoutes.GET("/individual/:id", RequestOverviewController.Single)
+			//requestRoutes.POST("/create")
+			requestRoutes.DELETE("/remove/:id", RequestOverviewController.Remove)
+		}
+
 		// Websocket Connection
 		v1.GET("/ws", middleware.ValidateAuthToken(), WebSocketController.Connect)
 	}
