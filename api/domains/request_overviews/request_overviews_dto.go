@@ -10,8 +10,8 @@ const (
 	StatusInProgress
 	StatusComplete
 	StatusCancelled
-
 )
+
 type RequestOverview struct {
 	ID                  int64                                   `json:"id" db:"id"`
 	UserID              int64                                   `json:"user_id" db:"user_id"`
@@ -35,6 +35,6 @@ type NewRequest struct {
 	DomainID    int64   `json:"domain_id" validate:"required"`
 	Endpoint    string  `json:"endpoint" validate:"required"`
 	Method      string  `json:"method" validate:"required,oneof=GET HEAD POST PUT PATCH DELETE CONNECT OPTIONS TRACE"`
-	Time        int     `json:"time" validate:"required,max=5,min=0"`
+	Time        int     `json:"time" validate:"required,max=360,min=0"` // seconds, max 5 minutes, min 30 seconds
 	NumRequests int     `json:"num_requests" validate:"required"`
 }

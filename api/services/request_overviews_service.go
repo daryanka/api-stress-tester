@@ -3,7 +3,6 @@ package services
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/daryanka/api-stress-tester/api/domains/domains"
 	"github.com/daryanka/api-stress-tester/api/domains/individual_requests"
 	"github.com/daryanka/api-stress-tester/api/domains/request_overviews"
@@ -70,9 +69,9 @@ func (i *requestOverviewService) GetSingle(id, userID int64) (*request_overviews
 }
 
 func (i *requestOverviewService) Create(r request_overviews.NewRequest) (int64, utils.RestErrI) {
-	// Max num of requests per minute is 1000
-	if (r.NumRequests / r.Time) > 1000 {
-		return 0, utils.NewBadRequest("The maximum allowed requests per minute is 1000")
+	// Max num of requests per second is 20
+	if (float64(r.NumRequests) / float64(r.Time)) > 15 {
+		return 0, utils.NewBadRequest("The maximum allowed requests per second is 15")
 	}
 
 	// Check domain belongs to user
@@ -110,14 +109,16 @@ func (i *requestOverviewService) Create(r request_overviews.NewRequest) (int64, 
 }
 
 func startNewRequests(overview request_overviews.RequestOverview, baseURL string) {
-	// TODO calculate time needed to wait between requests
-	waitTime := time.Second * 1
+	// microseconds between requests
+	//waitTime := time.Duration((float64(overview.Time) / float64(overview.NumRequests)) * 1000000000)
+	waitTime := time.Duration((float64(overview.Time) / float64(overview.NumRequests)) * 1000000000 * 0.90)
 
-	resultsChan := make(chan individual_requests.IndividualRequest, 100)
+	resultsChan := make(chan individual_requests.IndividualRequest, overview.NumRequests)
 	resultsSlice := []individual_requests.IndividualRequest{}
 	done := make(chan struct{})
 	var wg sync.WaitGroup
 	websocket_conn.AddDoneChan(overview.ID, done)
+	fullURL := utils.MergeBaseURLAndEndpoint(baseURL, overview.Endpoint)
 
 	go func() {
 		for el := range resultsChan {
@@ -139,18 +140,17 @@ func startNewRequests(overview request_overviews.RequestOverview, baseURL string
 		}
 	}()
 
-	fullURL := utils.MergeBaseURLAndEndpoint(baseURL, overview.Endpoint)
 
 	cancelled := false
 	for i := 0; i < overview.NumRequests; i++ {
-		time.Sleep(waitTime)
 		select {
+		case <-time.After(waitTime):
+			wg.Add(1)
+			go makeRequest(fullURL, overview.Method, overview.Payload, resultsChan)
+			break
 		case <-done:
 			cancelled = true
 			break
-		default:
-			wg.Add(1)
-			go makeRequest(fullURL, overview.Method, overview.Payload, resultsChan)
 		}
 		if cancelled {
 			break
@@ -228,7 +228,6 @@ func startNewRequests(overview request_overviews.RequestOverview, baseURL string
 }
 
 func makeRequest(fullURL, method string, jsonBody *string, resChan chan<- individual_requests.IndividualRequest) {
-	// TODO Test timeout
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -255,7 +254,6 @@ func makeRequest(fullURL, method string, jsonBody *string, resChan chan<- indivi
 	}
 	if err != nil {
 		// return status code 0 meaning time out and time to 10 seconds
-		fmt.Println("error", err.Error())
 		resChan <- individual_requests.IndividualRequest{
 			StatusCode: 0,
 			TimeTaken:  10000,

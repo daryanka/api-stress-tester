@@ -40,25 +40,3 @@ func (i *webSocketController) Connect(c *gin.Context) {
 
 	go websocket_conn.HandleAddConnection(conn, u.ID)
 }
-
-func handleConn(conn *websocket.Conn) {
-	for {
-		mt, message, err := conn.ReadMessage()
-		fmt.Println("messageType: ", mt)
-		fmt.Println("message: ", string(message))
-
-		if err != nil {
-			if mt == -1 {
-				// TODO  close websocket / remove from existing
-				break
-			}
-			utils.Logger.Error("error reading message", err)
-			break
-		}
-		err = conn.WriteMessage(mt, []byte("bye world"))
-		if err != nil {
-			utils.Logger.Error("error writing message", err)
-			break
-		}
-	}
-}
