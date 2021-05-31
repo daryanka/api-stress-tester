@@ -11,6 +11,8 @@ type RequestOverviewDaoI interface {
 	GetSingle(userID, id int64) (res RequestOverview, err error)
 	Delete(userID, id int64) (err error)
 	UpdateRequestResults(data RequestOverview) (err error)
+	Create(data RequestOverview) (id int64, err error)
+	UpdateStatus(status int, id int64) (err error)
 }
 
 type requestOverviewDao struct{}
@@ -41,8 +43,8 @@ func (i *requestOverviewDao) Delete(userID, id int64) (err error) {
 	return
 }
 
-func (i *requestOverviewDao) Create(data RequestOverview) (err error) {
-	_, err = clients.DB.Exec(queryCreate,
+func (i *requestOverviewDao) Create(data RequestOverview) (id int64, err error) {
+	res, err := clients.DB.Exec(queryCreate,
 		data.UserID,
 		data.DomainID,
 		data.Endpoint,
@@ -57,6 +59,11 @@ func (i *requestOverviewDao) Create(data RequestOverview) (err error) {
 	)
 	if err != nil {
 		utils.Logger.Error("error deleting request ", err)
+		return
+	}
+	id, err = res.LastInsertId()
+	if err != nil {
+		utils.Logger.Error("error getting request id ", err)
 	}
 	return
 }
@@ -71,6 +78,14 @@ func (i *requestOverviewDao) UpdateRequestResults(data RequestOverview) (err err
 	)
 	if err != nil {
 		utils.Logger.Error("error updating request results ", err)
+	}
+	return
+}
+
+func (i *requestOverviewDao) UpdateStatus(status int, id int64) (err error) {
+	_, err = clients.DB.Exec(queryUpdateStatus, status, id)
+	if err != nil {
+		utils.Logger.Error("error updating request status ", err)
 	}
 	return
 }

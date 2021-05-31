@@ -13,7 +13,8 @@ SELECT id,
        successful_req,
        failed_req,
        average_response_time,
-       status
+       status,
+	   created_at
 FROM request_overviews WHERE user_id = ?;`
 	queryGetSingle = `
 SELECT id,
@@ -27,7 +28,8 @@ SELECT id,
        successful_req,
        failed_req,
        average_response_time,
-       status
+       status,
+	   created_at
 FROM request_overviews WHERE user_id = ? AND id = ?;`
 	queryDelete = `DELETE FROM request_overviews WHERE user_id = ? AND id = ?;`
 	queryCreate = `
@@ -54,5 +56,6 @@ INSERT INTO request_overviews (
        ?,
        ?,
        ?);`
-	queryUpdateResults= `UPDATE request_overviews SET successful_req = ?, failed_req = ?, average_response_time = ?, status = ? WHERE id = ?;`
+	queryUpdateResults = `UPDATE request_overviews SET successful_req = ?, failed_req = ?, average_response_time = ?, status = ? WHERE id = ?;`
+	queryUpdateStatus  = `UPDATE request_overviews SET status = ? WHERE id = ?;`
 )

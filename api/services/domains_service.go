@@ -75,7 +75,7 @@ func (d *domainService) Verify(endpoint string, id, userId int64) utils.RestErrI
 
 	fmt.Println(domain)
 
-	if e := makeRequest(domain.DomainURL + endpoint, domain.Token); e != nil {
+	if e := makeVerifyDomainRequest(domain.DomainURL + endpoint, domain.Token); e != nil {
 		return e
 	}
 
@@ -94,7 +94,7 @@ func (d *domainService) Delete(id int64, userID int64) utils.RestErrI {
 	return nil
 }
 
-func makeRequest(url, token string) utils.RestErrI {
+func makeVerifyDomainRequest(url, token string) utils.RestErrI {
 	type Data struct {
 		Token string `json:"token"`
 	}

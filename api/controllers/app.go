@@ -34,7 +34,7 @@ func StartRouter() *gin.Engine {
 		{
 			requestRoutes.GET("/all", RequestOverviewController.All)
 			requestRoutes.GET("/individual/:id", RequestOverviewController.Single)
-			//requestRoutes.POST("/create")
+			requestRoutes.POST("/create", RequestOverviewController.Create)
 			requestRoutes.DELETE("/remove/:id", RequestOverviewController.Remove)
 		}
 

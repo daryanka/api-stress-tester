@@ -254,3 +254,23 @@ func RandStringRunes(n int) string {
 	}
 	return string(b)
 }
+
+func MergeBaseURLAndEndpoint(baseURL, endpoint string) string {
+	if len(baseURL) == 0 || len(endpoint) == 0 {
+		return ""
+	}
+
+	// Last Character
+	last := string(baseURL[len(baseURL) - 1])
+	first := string(endpoint[0])
+
+	if last == "/" {
+		baseURL = baseURL[0:len(baseURL) - 1]
+	}
+
+	if first == "/" {
+		endpoint = endpoint[1:]
+	}
+
+	return baseURL+"/"+endpoint
+}

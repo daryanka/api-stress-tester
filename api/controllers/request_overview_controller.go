@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"github.com/daryanka/api-stress-tester/api/domains/request_overviews"
 	"github.com/daryanka/api-stress-tester/api/services"
+	"github.com/daryanka/api-stress-tester/api/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -11,6 +13,7 @@ type RequestOverviewControllerI interface {
 	All(c *gin.Context)
 	Remove(c *gin.Context)
 	Single(c *gin.Context)
+	Create(c *gin.Context)
 }
 
 type requestOverviewController struct{}
@@ -60,4 +63,29 @@ func (i *requestOverviewController) Single(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (i *requestOverviewController) Create(c *gin.Context) {
+	var reqBody request_overviews.NewRequest
+
+	if ok := utils.GinShouldPassAll(c,
+		utils.GinShouldBindJSON(&reqBody),
+		utils.GinShouldValidate(&reqBody),
+	); !ok {
+		return
+	}
+
+	reqBody.UserID = GetAuthUser(c).ID
+
+	id, err := services.RequestOverviewService.Create(reqBody)
+
+	if err != nil {
+		c.JSON(err.Code(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, NoError{
+		Message: "Started stress test",
+		ID:      id,
+	})
 }
