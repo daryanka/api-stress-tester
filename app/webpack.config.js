@@ -14,7 +14,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx"]
   },
   entry: {
-    app: './src/index.tsx',
+    app: ['./src/index.tsx'],
   },
   devtool: 'cheap-module-source-map',
   module: {
