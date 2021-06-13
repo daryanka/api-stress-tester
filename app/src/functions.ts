@@ -2,20 +2,24 @@ import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import cookie from "js-cookie";
 import _ from "lodash";
 import {useHistory} from "react-router-dom";
+import {FormikHelpers} from "formik";
+import {useQueryClient} from "react-query";
+import {useAuthenticated} from "./Contexts/AuthenticationContext";
 
 type Methods = "GET" | "PUT" | "PATCH" | "POST" | "DELETE";
 
 export interface ErrorType {
-  error: boolean
-  message: string
+  error: string
   type?: string
   status_code: number
 }
 
 const useAPI = () => {
   const history = useHistory();
+  const queryClient = useQueryClient()
+  const {setIsAuthenticated} = useAuthenticated()
 
-  const send = async <T = any>(method: Methods, url: string, data?: any, additionalConfig?: AxiosRequestConfig) => {
+  const send = async <T>(method: Methods, url: string, data?: any, additionalConfig?: AxiosRequestConfig) => {
     const headers: {
       Authorization?: string
     } = {};
@@ -28,14 +32,14 @@ const useAPI = () => {
 
     switch (process.env.NODE_ENV) {
       case "dev":
-        baseURL = `http://localhost:8080${url}`;
+        baseURL = `http://localhost:8081/v1${url}`;
         break;
       case "prod":
         // TODO add prod when ready
-        baseURL = `http://localhost:8080${url}`;
+        baseURL = `http://localhost:8081/v1${url}`;
         break;
       default:
-        baseURL = `http://localhost:8080${url}`;
+        baseURL = `http://localhost:8081/v1${url}`;
         break;
     }
 
@@ -54,23 +58,23 @@ const useAPI = () => {
     return await axios.request<T>(config)
   }
 
-  const get = <T = any>(url: string, config?: AxiosRequestConfig) => {
+  const get = <T>(url: string, config?: AxiosRequestConfig) => {
     return send<T>("GET", url, undefined, config)
   }
 
-  const post = <T = any>(url: string, data: any, config?: AxiosRequestConfig) => {
+  const post = <T>(url: string, data: any, config?: AxiosRequestConfig) => {
     return send<T>("POST", url, data, config)
   }
 
-  const patch = <T = any>(url: string, data: object, config?: AxiosRequestConfig) => {
+  const patch = <T>(url: string, data: object, config?: AxiosRequestConfig) => {
     return send<T>("PATCH", url, data, config)
   }
 
-  const put = <T = any>(url: string, data: object, config?: AxiosRequestConfig) => {
+  const put = <T>(url: string, data: object, config?: AxiosRequestConfig) => {
     return send<T>("PUT", url, data, config)
   }
 
-  const deleteFunc = <T = any>(url: string, data?: object, config?: AxiosRequestConfig) => {
+  const deleteFunc = <T>(url: string, data?: object, config?: AxiosRequestConfig) => {
     return send<T>("DELETE", url, data, config)
   }
 
@@ -91,6 +95,42 @@ const useAPI = () => {
     history.push(url)
   }
 
+  const handleFormikError = (res: AxiosResponse, helpers: FormikHelpers<any>) => {
+    if (res.status < 200 || res.status >= 300) {
+      // Has error
+      // Check if validation error
+
+      // Check if validatoin error
+      if (res.status === 422) {
+        // Add errors to obj
+        const obj: { [key: string]: string } = {}
+        const keys = Object.keys(res.data)
+        for (let i = 0; i < keys.length; i++) {
+          obj[keys[i]] = res.data[keys[i]]
+        }
+
+        helpers.setStatus(obj)
+        return true
+      }
+
+      // set error
+      helpers.setStatus({
+        DEFAULT_ERROR: res?.data?.error
+      })
+
+      return true
+    }
+
+    return false
+  }
+
+  const logout = () => {
+    cookie.remove("token")
+    queryClient.invalidateQueries(["me"])
+    history.replace("/login")
+    setIsAuthenticated(false)
+  }
+
   return {
     send,
     get,
@@ -98,7 +138,9 @@ const useAPI = () => {
     patch,
     put,
     delete: deleteFunc,
-    error
+    handleFormikError,
+    error,
+    logout
   }
 }
 

@@ -46,6 +46,7 @@ func (i *requestOverviewDao) Delete(userID, id int64) (err error) {
 func (i *requestOverviewDao) Create(data RequestOverview) (id int64, err error) {
 	res, err := clients.DB.Exec(queryCreate,
 		data.UserID,
+		data.ReqName,
 		data.DomainID,
 		data.Endpoint,
 		data.Method,

@@ -41,10 +41,10 @@ func (d *domainService) Create(req domains.CreateDomain) (int64, utils.RestErrI)
 	// Verify if URL is valid
 	parsedURL, err := url.ParseRequestURI(req.DomainURL)
 	if err != nil {
-		return 0, utils.NewUnprocessableEntity("Invalid URL provided")
+		return 0, utils.NewBadRequest("Invalid URL provided")
 	}
 	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
-		return 0, utils.NewUnprocessableEntity("Invalid URL provided")
+		return 0, utils.NewBadRequest("Invalid URL provided")
 	}
 
 	validURL := parsedURL.Scheme + "://" + parsedURL.Hostname()

@@ -142,7 +142,7 @@ func GinShouldValidate(data interface{}) func(c *gin.Context) bool {
 func GinShouldBindJSON(data interface{}) func(c *gin.Context) bool {
 	return func(c *gin.Context) bool {
 		if err := c.ShouldBindJSON(&data); err != nil {
-			e := NewUnprocessableEntity("There was an issue making the request, please try again later.", "INVALID_JSON")
+			e := NewBadRequest("There was an issue making the request, please try again later.", "INVALID_JSON")
 			c.JSON(e.Code(), e)
 			return false
 		}
@@ -150,7 +150,7 @@ func GinShouldBindJSON(data interface{}) func(c *gin.Context) bool {
 	}
 }
 
-func GinShouldBindFormData(data interface{}) func(c *gin.Context) bool {
+func GinShouldBind(data interface{}) func(c *gin.Context) bool {
 	return func(c *gin.Context) bool {
 		if err := c.Bind(data); err != nil {
 			e := NewUnprocessableEntity("There was an issue making the request, please try again later.", "INVALID_FORM_DATA")

@@ -12,6 +12,7 @@ type UserControllerI interface {
 	Login(c *gin.Context)
 	Register(c *gin.Context)
 	VerifyEmail(c *gin.Context)
+	Me(c *gin.Context)
 }
 
 type userController struct{}
@@ -49,7 +50,7 @@ func (u *userController) Register(c *gin.Context) {
 
 	if reqBody.PasswordConfirmation != reqBody.Password {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"password": "The passwords need to match",
+			"password": "Passwords do not match",
 		})
 		return
 	}
@@ -67,12 +68,11 @@ func (u *userController) Register(c *gin.Context) {
 	})
 }
 
-
 func (u *userController) VerifyEmail(c *gin.Context) {
 	token := c.Query("token")
 
 	if token == "" {
-		e := utils.NewUnprocessableEntity("Unable to verify email")
+		e := utils.NewBadRequest("Unable to verify email")
 		c.JSON(e.Code(), e)
 		return
 	}
@@ -88,4 +88,8 @@ func (u *userController) VerifyEmail(c *gin.Context) {
 		Error:   false,
 		Message: "Successfully activated account",
 	})
+}
+
+func (u *userController) Me(c *gin.Context) {
+	c.JSON(http.StatusOK, GetAuthUser(c))
 }

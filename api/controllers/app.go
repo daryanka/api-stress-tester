@@ -11,6 +11,7 @@ func StartRouter() *gin.Engine {
 
 	corsDefault := cors.DefaultConfig()
 	corsDefault.AllowOrigins = []string{"http://localhost:5000"}
+	corsDefault.AddAllowHeaders("authorization")
 	r.Use(cors.New(corsDefault))
 
 	v1 := r.Group("/v1")
@@ -20,6 +21,7 @@ func StartRouter() *gin.Engine {
 			authRoutes.POST("/login", UserController.Login)
 			authRoutes.POST("/register", UserController.Register)
 			authRoutes.POST("/verify", UserController.VerifyEmail)
+			authRoutes.GET("/me",  middleware.ValidateAuthToken(), UserController.Me)
 		}
 
 		domainRoutes := v1.Group("/domains", middleware.ValidateAuthToken())
