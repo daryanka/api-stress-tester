@@ -11,6 +11,8 @@ export const Theme = {
   fontSize: "16px"
 }
 
+export type themeType = typeof Theme
+
 export const PageWrapper = styled.div`
   margin: 0 40px;
 

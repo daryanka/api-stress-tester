@@ -53,14 +53,14 @@ const InputField = styled.input`
   }
 `
 
-const ErrorMessage = styled.p`
+export const ErrorMessage = styled.p`
   font-size: ${props => props.theme.fontSize};
   margin: 0 10px 10px 10px;
   color: ${props => props.theme.errorColor};
   font-weight: bold;
 `
 
-const LabelText = styled.p`
+export const LabelText = styled.p`
   transition: ease all 200ms;
   position: absolute;
   font-size: 20px;
@@ -70,12 +70,12 @@ const LabelText = styled.p`
   font-style: italic;
 `
 
-const Label = styled.label`
+export const Label = styled.label`
   position: relative;
   width: 100%;
 `
 
-const InputWrapper = styled.div`
+export const InputWrapper = styled.div`
   padding-top: 30px;
 `
 
