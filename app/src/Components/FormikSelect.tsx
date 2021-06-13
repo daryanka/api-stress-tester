@@ -174,7 +174,9 @@ const FormikSelect: FC<propsI> = (props) => {
             }
           }}
           components={{
-            DropdownIndicator: DownArrow
+            DropdownIndicator: () => {
+              return <DownArrow />
+            }
           }}
         />
         {label && <LabelText className={"label-holder"}>{label}</LabelText>}
