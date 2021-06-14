@@ -9,7 +9,7 @@ interface props extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
 }
 
-const InputField = styled.input`
+export const InputField = styled.input`
   width: 100%;
   border: 3px solid ${props => props.theme.black};
   border-top: 0;

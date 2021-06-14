@@ -3,6 +3,7 @@ import {ButtonsRight, SectionHeader} from "../../Styled";
 import {Form, Formik} from "formik";
 import FormikSelect from "../../Components/FormikSelect";
 import Button from "../../Components/Button";
+import FormikTimeInput from "../../Components/FormikTimeInput";
 
 interface FormValues {
   method: string
@@ -45,13 +46,15 @@ const NewRequest: FC = () => {
       <SectionHeader>New Stress Test</SectionHeader>
       <Formik
         initialValues={{
-          method: ""
+          method: "",
+          duration: ""
         }}
         onSubmit={test}>
         {() => {
           return (
             <Form>
               <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
+              <FormikTimeInput name={"duration"} label={"Duration"} />
               <ButtonsRight spaceTop>
                 <Button>Start</Button>
               </ButtonsRight>

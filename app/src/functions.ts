@@ -144,4 +144,88 @@ const useAPI = () => {
   }
 }
 
+/**
+ * Seconds / Minutes string to seconds number
+ */
+export const SHToMinutes = (str: string) => {
+  // Currently only working with minutes and seconds, can be configured to work with hours, days and weeks as well.
+
+  // To lowercase and remove all consecutive spaces to single space
+  str = str.toLowerCase().replace(/\s+/g,' ')
+
+  // Split by spaces and remove all empty strings or just spaces
+  const timesArr = str.split(" ").filter(x => {
+    // If returns true keep
+    return !(x === " " || x === "");
+  })
+
+  const time = {
+    m: 0,
+    s: 0,
+    // h: 0,
+    // d: 0,
+    // w: 0,
+  }
+
+  // type timeTypes = "m" | "h" | "d" | "w" | "s";
+  type timeTypes = "m" | "s";
+
+  let valid: boolean = true;
+  for (let i = 0; i < timesArr.length; i++) {
+    // const regex = /^([0-9]+)([wdmhs])$/;
+    const regex = /^([0-9]+)([ms])$/;
+    if (!regex.test(timesArr[i])) {
+      //Invalid
+      valid = false;
+      break;
+    } else {
+      //Valid
+      const match = regex.exec(timesArr[i])
+      const number: number = parseInt(match![1])
+      const timeType: timeTypes = match![2] as timeTypes;
+
+      time[timeType] = time[timeType] + number;
+    }
+  }
+
+  let totalSeconds = 0;
+
+  for (let key in time) {
+    switch (key as timeTypes) {
+      case "s":
+        totalSeconds = totalSeconds + time.s
+        break;
+      case "m":
+        totalSeconds = totalSeconds + (time.m * 60)
+        break;
+      // case "h":
+      //   totalSeconds = totalSeconds + (60 * 60 * time.h)
+      //   break;
+      // case "d":
+      //   totalSeconds = totalSeconds + (60 * 24 * time.d)
+      //   break;
+      // case "w":
+      //   totalSeconds = totalSeconds + (60 * 24 * 7 * time.w)
+      //   break;
+    }
+  }
+
+  let PrettyString = []
+  let temp = totalSeconds
+
+  if (totalSeconds / 60 > 1) {
+    PrettyString.push(`${Math.floor(totalSeconds / 60)} Minutes`)
+    temp = temp - Math.floor(totalSeconds / 60) * 60
+  }
+  if (temp > 0) {
+    PrettyString.push(`${temp} Seconds`)
+  }
+
+  return {
+    valid,
+    totalSeconds,
+    PrettyString: PrettyString.join(", ")
+  }
+}
+
 export default useAPI
