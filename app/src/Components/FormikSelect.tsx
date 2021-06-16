@@ -31,6 +31,8 @@ const DownArrow = styled.div`
 `
 
 const SelectWrapper = styled(InputWrapper)`
+  font-size: 16px;
+  
   .f-select__menu {
     margin-top: 0;
     box-shadow: none;
@@ -41,6 +43,7 @@ const SelectWrapper = styled(InputWrapper)`
   }
 
   .f-select__control {
+    height: 42px;
     border: 3px solid ${props => props.theme.black};
     border-radius: 0;
     border-top: 0;
@@ -170,6 +173,7 @@ const FormikSelect: FC<propsI> = (props) => {
                 ...theme.colors,
                 primary25: styledTheme.lightBlack,
                 primary50: styledTheme.lightBlack,
+                primary: styledTheme.lightBlack,
               },
             }
           }}

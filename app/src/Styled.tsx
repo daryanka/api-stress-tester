@@ -44,17 +44,24 @@ export const ContentBox = styled.div`
   padding: 40px;
 `
 
-export const ButtonsRight = styled.div<{spaceTop: boolean}>`
+export const ButtonsRight = styled.div<{ spaceTop: boolean }>`
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  
+
   button, p {
     margin-left: 20px;
   }
-  
+
   ${props => props.spaceTop && "margin-top: 15px;"}
+`
+
+export const FormGrid = styled.div<{ numCols: number, gap?: number }>`
+  display: grid;
+  grid-template-columns: repeat(${props => props.numCols}, 1fr);
+
+  grid-gap: ${props => props.gap ? `${props.gap}px` : "20px"};
 `
 
 export const InlineLink = styled(Link)`

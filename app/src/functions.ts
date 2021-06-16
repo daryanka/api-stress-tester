@@ -147,7 +147,7 @@ const useAPI = () => {
 /**
  * Seconds / Minutes string to seconds number
  */
-export const SHToMinutes = (str: string) => {
+export const SMToMinutes = (str: string) => {
   // Currently only working with minutes and seconds, can be configured to work with hours, days and weeks as well.
 
   // To lowercase and remove all consecutive spaces to single space

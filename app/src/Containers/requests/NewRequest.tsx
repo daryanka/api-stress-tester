@@ -1,13 +1,55 @@
 import React, {FC} from "react";
-import {ButtonsRight, SectionHeader} from "../../Styled";
+import {ButtonsRight, FormGrid, Section, SectionHeader} from "../../Styled";
 import {Form, Formik} from "formik";
 import FormikSelect from "../../Components/FormikSelect";
 import Button from "../../Components/Button";
 import FormikTimeInput from "../../Components/FormikTimeInput";
+import * as Yup from "yup";
+import {SMToMinutes} from "../../functions";
+import FormikInput from "../../Components/FormikInput";
+import FormikTextField from "../../Components/FormikTextField";
 
 interface FormValues {
   method: string
 }
+
+const validationSchema = Yup.object({
+  method: Yup.string().required(),
+  duration: Yup.string().test({
+    name: "time_type_custom",
+    message: (v: { value: string | undefined }) => {
+      if (v.value === undefined) {
+        return "Duration format is invalid"
+      }
+      const {valid, totalSeconds} = SMToMinutes(v.value)
+      if (valid) {
+        // Check total time time is correct
+        if (totalSeconds > 300) { // max 300s / 5m
+          return "Maximum duration is 5 minutes"
+        }
+        if (totalSeconds < 10) {
+          return "Minimum duration is 10 seconds"
+        }
+      }
+      return "Duration format is invalid"
+    },
+    test: function (val) {
+      if (val === undefined) {
+        return false
+      }
+      const {valid, totalSeconds} = SMToMinutes(val)
+      if (valid) {
+        // Check total time time is correct
+        if (totalSeconds > 300) { // max 300s / 5m
+          return false
+        }
+        return totalSeconds >= 10;
+      }
+      return false
+    }
+  }),
+  payload: Yup.string().label("Payload")
+})
 
 const methodOptions = [
   {
@@ -47,18 +89,25 @@ const NewRequest: FC = () => {
       <Formik
         initialValues={{
           method: "",
-          duration: ""
+          duration: "",
         }}
+        validationSchema={validationSchema}
         onSubmit={test}>
         {() => {
           return (
-            <Form>
-              <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
-              <FormikTimeInput name={"duration"} label={"Duration"} />
-              <ButtonsRight spaceTop>
-                <Button>Start</Button>
-              </ButtonsRight>
-            </Form>
+            <Section>
+              <Form>
+                <FormGrid numCols={2}>
+                  <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
+                  <FormikTimeInput name={"duration"} label={"Duration (e.g. 2m 30s)"}/>
+                  <FormikInput name={"endpoint"} label={"Endpoint"} />
+                  <FormikTextField name={"payload"} label={"Payload (optional)"} />
+                </FormGrid>
+                <ButtonsRight spaceTop>
+                  <Button>Start</Button>
+                </ButtonsRight>
+              </Form>
+            </Section>
           )
         }}
       </Formik>
