@@ -74,7 +74,6 @@ export const LabelText = styled.p`
 `
 
 export const Label = styled.label`
-  //position: relative;
   width: 100%;
 `
 

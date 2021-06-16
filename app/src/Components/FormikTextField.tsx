@@ -1,8 +1,8 @@
 import {useField, useFormikContext} from "formik";
 import React, {FC, useMemo} from "react";
-import styled from "styled-components";
 import _ from "lodash";
 import {ErrorMessage, InputField, InputWrapper, Label, LabelText} from "./FormikInput";
+import styled from "styled-components";
 
 interface props extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   wrapperClassName?: string
@@ -10,12 +10,11 @@ interface props extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   label: string
 }
 
-const Textarea = styled(InputField)`
-  .label-holder {
-    
-  }
+const TextField = styled(InputField)`
+  min-height: 100px;
+  max-height: 500px;
+  resize: vertical;
 `
-
 
 const FormikTextField: FC<props> = ({placeholder, wrapperClassName, className, label, ...props}) => {
   const {status} = useFormikContext()
@@ -32,7 +31,7 @@ const FormikTextField: FC<props> = ({placeholder, wrapperClassName, className, l
   return (
     <InputWrapper className={wrapperClassName ? wrapperClassName : ""}>
       <Label>
-        <Textarea
+        <TextField
           as={"textarea"}
           {...props}
           {...field}

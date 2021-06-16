@@ -64,6 +64,10 @@ export const FormGrid = styled.div<{ numCols: number, gap?: number }>`
   grid-gap: ${props => props.gap ? `${props.gap}px` : "20px"};
 `
 
+export const GridItem = styled.div<{startCol: number, endCol: number}>`
+  grid-column: ${props => props.startCol}/${props => props.endCol};
+`
+
 export const InlineLink = styled(Link)`
   color: deepskyblue;
   text-decoration: underline;

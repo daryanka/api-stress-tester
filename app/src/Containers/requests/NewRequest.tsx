@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {ButtonsRight, FormGrid, Section, SectionHeader} from "../../Styled";
+import {ButtonsRight, FormGrid, GridItem, Section, SectionHeader} from "../../Styled";
 import {Form, Formik} from "formik";
 import FormikSelect from "../../Components/FormikSelect";
 import Button from "../../Components/Button";
@@ -11,10 +11,16 @@ import FormikTextField from "../../Components/FormikTextField";
 
 interface FormValues {
   method: string
+  domain: string
+  endpoint: string
+  duration: string
+  payload?: string
 }
 
 const validationSchema = Yup.object({
   method: Yup.string().required(),
+  domain: Yup.string().required(),
+  endpoint: Yup.string().required(),
   duration: Yup.string().test({
     name: "time_type_custom",
     message: (v: { value: string | undefined }) => {
@@ -90,6 +96,7 @@ const NewRequest: FC = () => {
         initialValues={{
           method: "",
           duration: "",
+          domain: ""
         }}
         validationSchema={validationSchema}
         onSubmit={test}>
@@ -97,11 +104,17 @@ const NewRequest: FC = () => {
           return (
             <Section>
               <Form>
-                <FormGrid numCols={2}>
+                <FormGrid numCols={3}>
                   <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
                   <FormikTimeInput name={"duration"} label={"Duration (e.g. 2m 30s)"}/>
-                  <FormikInput name={"endpoint"} label={"Endpoint"} />
-                  <FormikTextField name={"payload"} label={"Payload (optional)"} />
+                  <FormikInput name={"endpoint"} label={"Endpoint"}/>
+                  <GridItem startCol={1} endCol={4}>
+                    {/* TODO get domains list */}
+                    <FormikSelect name={"domain"} label={"Domain"} options={methodOptions}/>
+                  </GridItem>
+                  <GridItem startCol={1} endCol={4}>
+                    <FormikTextField name={"payload"} label={"Payload (optional)"}/>
+                  </GridItem>
                 </FormGrid>
                 <ButtonsRight spaceTop>
                   <Button>Start</Button>
