@@ -9,6 +9,7 @@ interface props extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
 }
 
+// NOTE if changes are made to these styles also update FormikSelect.tsx styles
 export const InputField = styled.input`
   height: 40px;
   width: 100%;
@@ -42,13 +43,13 @@ export const InputField = styled.input`
   font-size: 20px;
 
   &:focus + .label-holder {
-    top: -20px;
+    top: 10px;
     font-size: ${props => props.theme.fontSize};
     font-weight: bold;
   }
 
   &.has-val + .label-holder {
-    top: -20px;
+    top: 10px;
     font-size: ${props => props.theme.fontSize};
     font-weight: bold;
   }
@@ -65,7 +66,7 @@ export const LabelText = styled.p`
   transition: ease all 200ms;
   position: absolute;
   font-size: 20px;
-  top: 10px;
+  top: 40px;
   left: 10px;
   white-space: nowrap;
   bottom: 10px;
@@ -73,12 +74,13 @@ export const LabelText = styled.p`
 `
 
 export const Label = styled.label`
-  position: relative;
+  //position: relative;
   width: 100%;
 `
 
 export const InputWrapper = styled.div`
   padding-top: 30px;
+  position: relative;
 `
 
 const FormikInput: FC<props> = ({placeholder, wrapperClassName, className, label, ...props}) => {

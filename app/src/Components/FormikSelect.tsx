@@ -68,13 +68,13 @@ const SelectWrapper = styled(InputWrapper)`
 
   .formik-sel {
     &.is-focused + .label-holder {
-      top: -20px;
+      top: 10px;
       font-size: ${props => props.theme.fontSize};
       font-weight: bold;
     }
 
     &.has-val + .label-holder {
-      top: -20px;
+      top: 10px;
       font-size: ${props => props.theme.fontSize};
       font-weight: bold;
     }
