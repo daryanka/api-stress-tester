@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import {SMToMinutes} from "../../functions";
 import FormikInput from "../../Components/FormikInput";
 import FormikTextField from "../../Components/FormikTextField";
+import useDomains from "../../Hooks/DomainsHook";
 
 interface FormValues {
   method: string
@@ -18,9 +19,9 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object({
-  method: Yup.string().required(),
-  domain: Yup.string().required(),
-  endpoint: Yup.string().required(),
+  method: Yup.string().required().label("Method"),
+  domain: Yup.string().required().label("Domain"),
+  endpoint: Yup.string().required().label("Endpoint"),
   duration: Yup.string().test({
     name: "time_type_custom",
     message: (v: { value: string | undefined }) => {
@@ -85,6 +86,8 @@ const methodOptions = [
 ]
 
 const NewRequest: FC = () => {
+  const {verifiedOnlyOption} = useDomains()
+
   const test = (values: FormValues) => {
     console.log(values)
   }
@@ -96,7 +99,9 @@ const NewRequest: FC = () => {
         initialValues={{
           method: "",
           duration: "",
-          domain: ""
+          domain: "",
+          payload: "",
+          endpoint: ""
         }}
         validationSchema={validationSchema}
         onSubmit={test}>
@@ -107,10 +112,9 @@ const NewRequest: FC = () => {
                 <FormGrid numCols={3}>
                   <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
                   <FormikTimeInput name={"duration"} label={"Duration (e.g. 2m 30s)"}/>
-                  <FormikInput name={"endpoint"} label={"Endpoint"}/>
+                  <FormikSelect name={"domain"} label={"Domain"} options={verifiedOnlyOption}/>
                   <GridItem startCol={1} endCol={4}>
-                    {/* TODO get domains list */}
-                    <FormikSelect name={"domain"} label={"Domain"} options={methodOptions}/>
+                    <FormikInput name={"endpoint"} label={"Endpoint"}/>
                   </GridItem>
                   <GridItem startCol={1} endCol={4}>
                     <FormikTextField name={"payload"} label={"Payload (optional)"}/>

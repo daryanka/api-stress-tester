@@ -6,11 +6,11 @@ SELECT d.id AS id,
        domain_url,
        token,
        verified,
-       user_id,
+       d.user_id AS user_id,
        COALESCE(COUNT(ro.id), 0) AS num_requests
 FROM domains d
          LEFT JOIN request_overviews ro on d.id = ro.domain_id
-AND user_id = ? GROUP BY d.id;
+AND d.user_id = ? GROUP BY d.id;
 `
 	queryGetSingle = `
 SELECT d.id AS id,

@@ -21,7 +21,8 @@ const PrivateRoute: FC<RouteProps> = (props) => {
     },
     onSuccess: () => {
       setIsAuthenticated(true)
-    }
+    },
+    refetchOnWindowFocus: true,
   })
 
   if (me.isLoading) {

@@ -30,9 +30,10 @@ const DownArrow = styled.div`
   border-top: 6px solid ${props => props.theme.black};
 `
 
+// TODO add green valid color to border and label text
 const SelectWrapper = styled(InputWrapper)`
   font-size: 16px;
-  
+
   .f-select__menu {
     margin-top: 0;
     box-shadow: none;
@@ -77,6 +78,29 @@ const SelectWrapper = styled(InputWrapper)`
       top: 10px;
       font-size: ${props => props.theme.fontSize};
       font-weight: bold;
+    }
+
+    &.touched {
+      border-color: ${props => props.theme.successColor};
+
+      + .label-holder {
+        color: ${props => props.theme.successColor};
+      }
+
+      &.error {
+        .f-select__control {
+          border-color: ${props => props.theme.errorColor};
+        }
+        
+        .arr-down {
+          border-top-color: ${props => props.theme.errorColor};
+        }
+        color: ${props => props.theme.errorColor};
+
+        + .label-holder {
+          color: ${props => props.theme.errorColor};
+        }
+      }
     }
   }
 
@@ -146,9 +170,12 @@ const FormikSelect: FC<propsI> = (props) => {
   };
 
   const handleBlur = (e: React.FocusEvent<any>) => {
+    helpers.setTouched(true)
     setIsSelected(false)
     field.onBlur(e)
   }
+
+  console.log(`name: ${props.name}, touched: ${meta.touched}`)
 
   return (
     <SelectWrapper className={wrapperClassName ? wrapperClassName : ""}>
@@ -179,7 +206,7 @@ const FormikSelect: FC<propsI> = (props) => {
           }}
           components={{
             DropdownIndicator: () => {
-              return <DownArrow />
+              return <DownArrow className={"arr-down"}/>
             }
           }}
         />

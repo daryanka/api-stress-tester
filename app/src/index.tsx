@@ -22,7 +22,8 @@ const General = styled.div`
 const client = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false
+      retry: false,
+      refetchOnWindowFocus: false
     }
   }
 })
