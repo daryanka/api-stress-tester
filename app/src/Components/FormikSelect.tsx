@@ -54,15 +54,15 @@ const SelectWrapper = styled(InputWrapper)`
     margin-bottom: 20px;
 
     &:hover {
-      border-bottom: 3px solid ${props => props.theme.black} !important;
+      border-bottom: 3px solid ${props => props.theme.black};
     }
 
     &--is-focused {
-      border: 3px solid ${props => props.theme.black} !important;
-      border-radius: 0 !important;
-      border-top: 0 !important;
-      border-right: 0 !important;
-      border-left: 0 !important;
+      border: 3px solid ${props => props.theme.black};
+      border-radius: 0;
+      border-top: 0;
+      border-right: 0;
+      border-left: 0;
       box-shadow: none;
     }
   }
@@ -81,7 +81,13 @@ const SelectWrapper = styled(InputWrapper)`
     }
 
     &.touched {
-      border-color: ${props => props.theme.successColor};
+      .f-select__control {
+        border-color: ${props => props.theme.successColor};
+      }
+      
+      .arr-down {
+        border-top-color: ${props => props.theme.successColor};
+      }
 
       + .label-holder {
         color: ${props => props.theme.successColor};
@@ -91,11 +97,14 @@ const SelectWrapper = styled(InputWrapper)`
         .f-select__control {
           border-color: ${props => props.theme.errorColor};
         }
-        
+
         .arr-down {
           border-top-color: ${props => props.theme.errorColor};
         }
-        color: ${props => props.theme.errorColor};
+
+        .label-holder {
+          color: ${props => props.theme.errorColor};
+        }
 
         + .label-holder {
           color: ${props => props.theme.errorColor};
@@ -180,9 +189,6 @@ const FormikSelect: FC<propsI> = (props) => {
   return (
     <SelectWrapper className={wrapperClassName ? wrapperClassName : ""}>
       <Label>
-        {/*<InputField*/}
-        {/*  className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!_.isEmpty(field.value) && "has-val"}`}*/}
-        {/*/>*/}
         <Select
           className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!_.isEmpty(field.value) && "has-val"} ${isSelected && "is-focused"} formik-sel`}
           classNamePrefix={"f-select"}
