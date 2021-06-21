@@ -1,27 +1,34 @@
 import React, {FC} from "react";
 import {ButtonsRight, FormGrid, GridItem, Section, SectionHeader} from "../../Styled";
-import {Form, Formik} from "formik";
+import {Form, Formik, FormikHelpers} from "formik";
 import FormikSelect from "../../Components/FormikSelect";
 import Button from "../../Components/Button";
 import FormikTimeInput from "../../Components/FormikTimeInput";
 import * as Yup from "yup";
-import {SMToMinutes} from "../../functions";
+import useAPI, {SMToMinutes} from "../../functions";
 import FormikInput from "../../Components/FormikInput";
 import FormikTextField from "../../Components/FormikTextField";
 import useDomains from "../../Hooks/DomainsHook";
+import _ from "lodash";
+import FormikStandardError from "../../Components/FormikStandardError";
+import {useHistory} from "react-router-dom";
 
 interface FormValues {
+  req_name: string
   method: string
-  domain: string
+  domain_id: string
   endpoint: string
   duration: string
   payload?: string
+  num_requests: string
 }
 
 const validationSchema = Yup.object({
   method: Yup.string().required().label("Method"),
-  domain: Yup.string().required().label("Domain"),
+  req_name: Yup.string().required().label("Request Name"),
+  domain_id: Yup.string().required().label("Domain"),
   endpoint: Yup.string().required().label("Endpoint"),
+  num_requests: Yup.number().required().label("Number Of Requests"),
   duration: Yup.string().test({
     name: "time_type_custom",
     message: (v: { value: string | undefined }) => {
@@ -87,9 +94,29 @@ const methodOptions = [
 
 const NewRequest: FC = () => {
   const {verifiedOnlyOption} = useDomains()
+  const api = useAPI();
+  const history = useHistory()
 
-  const test = (values: FormValues) => {
-    console.log(values)
+  const handleSubmit = async (values: FormValues, helpers: FormikHelpers<any>) => {
+    const {totalSeconds} = SMToMinutes(values.duration)
+    helpers.setStatus({})
+
+    const res = await api.post<{id: number}>("/requests/create", {
+      req_name: values.req_name,
+      domain_id: values.domain_id,
+      time: totalSeconds,
+      endpoint: values.endpoint,
+      method: values.method,
+      num_requests: parseInt(values.num_requests),
+      payload: _.isEmpty(values.payload) ? null : values.payload
+    })
+
+    if (!api.handleFormikError(res, helpers)) {
+      // Push to view page
+      history.push(`/stress-test/${res.data.id}`)
+    } else {
+      helpers.setTouched({})
+    }
   }
 
   return (
@@ -99,29 +126,45 @@ const NewRequest: FC = () => {
         initialValues={{
           method: "",
           duration: "",
-          domain: "",
+          domain_id: "",
           payload: "",
-          endpoint: ""
+          endpoint: "",
+          num_requests: "",
+          req_name: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={test}>
+        onSubmit={handleSubmit}>
         {() => {
           return (
             <Section>
               <Form>
-                <FormGrid numCols={3}>
+                <FormGrid numCols={4}>
+                  <GridItem startCol={1} endCol={3}>
+                    <FormikInput name={"req_name"} label={"Request Name"}/>
+                  </GridItem>
+
                   <FormikSelect name={"method"} label={"Method"} options={methodOptions}/>
-                  <FormikTimeInput name={"duration"} label={"Duration (e.g. 2m 30s)"}/>
-                  <FormikSelect name={"domain"} label={"Domain"} options={verifiedOnlyOption}/>
-                  <GridItem startCol={1} endCol={4}>
+                  <FormikSelect name={"domain_id"} label={"Domain"} options={verifiedOnlyOption}/>
+                  <GridItem startCol={1} endCol={5}>
                     <FormikInput name={"endpoint"} label={"Endpoint"}/>
                   </GridItem>
-                  <GridItem startCol={1} endCol={4}>
+
+                  <GridItem startCol={1} endCol={3}>
+                    <FormikTimeInput name={"duration"} label={"Duration (e.g. 2m 30s)"}/>
+                  </GridItem>
+
+                  <GridItem startCol={3} endCol={5}>
+                    <FormikInput name={"num_requests"} label={"Number Of Requests"} type={"number"}/>
+                  </GridItem>
+
+                  <GridItem startCol={1} endCol={5}>
                     <FormikTextField name={"payload"} label={"Payload (optional)"}/>
                   </GridItem>
                 </FormGrid>
+
+                <FormikStandardError/>
                 <ButtonsRight spaceTop>
-                  <Button>Start</Button>
+                  <Button type={"submit"}>Start</Button>
                 </ButtonsRight>
               </Form>
             </Section>

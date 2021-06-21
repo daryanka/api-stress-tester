@@ -9,6 +9,8 @@ import (
 func StartRouter() *gin.Engine {
 	r := gin.New()
 
+	r.Use(gin.Logger())
+
 	corsDefault := cors.DefaultConfig()
 	corsDefault.AllowOrigins = []string{"http://localhost:5000"}
 	corsDefault.AddAllowHeaders("authorization")

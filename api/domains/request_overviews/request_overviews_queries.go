@@ -20,7 +20,7 @@ SELECT request_overviews.id AS id,
        domain_url
 FROM request_overviews
     LEFT JOIN domains d on d.id = request_overviews.domain_id
-WHERE request_overviews.user_id = ?;`
+WHERE request_overviews.user_id = ? ORDER BY request_overviews.created_at DESC;`
 	queryGetSingle = `
 SELECT request_overviews.id AS id,
        request_overviews.user_id as user_id,

@@ -17,7 +17,7 @@ interface propsI {
 
 interface Option {
   label: string
-  value: string
+  value: any
 }
 
 const DownArrow = styled.div`
@@ -184,13 +184,18 @@ const FormikSelect: FC<propsI> = (props) => {
     field.onBlur(e)
   }
 
-  console.log(`name: ${props.name}, touched: ${meta.touched}`)
+  const isEmpty = (val: any) => {
+    if (typeof val === "number") {
+      return false
+    }
+    return _.isEmpty(val)
+  }
 
   return (
     <SelectWrapper className={wrapperClassName ? wrapperClassName : ""}>
       <Label>
         <Select
-          className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!_.isEmpty(field.value) && "has-val"} ${isSelected && "is-focused"} formik-sel`}
+          className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!isEmpty(field.value) && "has-val"} ${isSelected && "is-focused"} formik-sel`}
           classNamePrefix={"f-select"}
           onBlur={handleBlur}
           onFocus={() => setIsSelected(true)}

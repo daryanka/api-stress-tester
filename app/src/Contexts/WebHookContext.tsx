@@ -1,4 +1,6 @@
 import React, {createContext, FC, useContext, useState} from "react";
+import cookie from "js-cookie";
+import _ from "lodash";
 
 type FullRequest =  {
   [key: string]: {
@@ -45,11 +47,11 @@ export const WebhookProvider: FC = (props) => {
 }
 
 export const useWebhook = () => {
-  const {setRequests, setCon} = useContext(WebhookContext) as contextState
+  const {setRequests, setCon, con} = useContext(WebhookContext) as contextState
 
   const initialiseConnection = () => {
     // Send
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZXhwIjoxNjMyNzQ2ODg4LCJpYXQiOjE2MjI3NDY4ODgsImlzcyI6ImpvdXJuYWxfYXBpIn0.9iKCH1cJRjjbrJxvHK3_10GWqBkIOoTR8dAtmVTZ_bU"
+    const token = cookie.get("token")
     const socket = new WebSocket("ws://localhost:8081/v1/ws", token)
     socket.onopen = (ev) => {
       console.log(ev)
@@ -66,11 +68,21 @@ export const useWebhook = () => {
     }
   }
 
+  const closeConnection = () => {
+    if (con) {
+      try {
+        con.close()
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
   const handleMessage = (msg :MessageEvent) => {
     const data = JSON.parse(msg.data) as MessageType
 
     setRequests((prev) => {
-      prev = {...prev};
+      prev = _.cloneDeep(prev);
 
       switch (data.type) {
         case "INDIVIDUAL_REQUEST":
@@ -103,16 +115,19 @@ export const useWebhook = () => {
 
   return {
     initialiseConnection,
+    closeConnection
   }
 }
 
-export const useRequestHook = (requestID: number) => {
+export const useRequestHook = (requestID: string) => {
   const {requests, con} = useContext(WebhookContext) as contextState
+
+  console.log("inside hook")
 
   const sendCancel = () => {
     const data = {
       type: "CANCEL_REQUEST",
-      requestID: requestID
+      request_id: parseInt(requestID)
     }
     if (con) {
       try {

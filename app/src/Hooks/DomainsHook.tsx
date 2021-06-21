@@ -42,7 +42,7 @@ const useDomains = () => {
   const verifiedOnlyOption = useMemo(() => {
     if (queryInfo.data) {
       return queryInfo.data.filter(x => x.verified === 1).map(el => ({
-        value: `${el.id}`,
+        value: el.id,
         label: el.domain_url
       }))
     }

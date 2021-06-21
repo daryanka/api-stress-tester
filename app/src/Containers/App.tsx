@@ -5,8 +5,18 @@ import Nav from "../Components/Nav";
 import PrivateRoute from "../Components/PrivateRoute";
 import Register from "./Register";
 import RequestPage from "./requests/Requests";
+import {useAuthenticated} from "../Contexts/AuthenticationContext";
+import {useWebhook} from "../Contexts/WebHookContext";
 
 const App: FC = () => {
+  const {isAuthenticated} = useAuthenticated()
+  const {initialiseConnection} = useWebhook()
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      initialiseConnection()
+    }
+  }, [isAuthenticated])
+
   return (
     <div className={"app-wrapper"}>
       <Nav />

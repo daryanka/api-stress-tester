@@ -81,6 +81,7 @@ func (i *requestOverviewService) Create(r request_overviews.NewRequest) (int64, 
 	}
 
 	overview := request_overviews.RequestOverview{
+		ReqName:             r.ReqName,
 		UserID:              r.UserID,
 		DomainID:            r.DomainID,
 		Endpoint:            r.Endpoint,
@@ -92,6 +93,9 @@ func (i *requestOverviewService) Create(r request_overviews.NewRequest) (int64, 
 		FailedReq:           0,
 		AverageResponseTime: 0,
 		Status:              request_overviews.StatusInProgress,
+		CreatedAt:           time.Time{},
+		Domain:              request_overviews.NestedDomain{},
+		IndividualRequests:  nil,
 	}
 
 	// Create request overview

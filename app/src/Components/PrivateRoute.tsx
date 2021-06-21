@@ -9,7 +9,6 @@ import {useAuthenticated} from "../Contexts/AuthenticationContext";
 const PrivateRoute: FC<RouteProps> = (props) => {
   const {setIsAuthenticated} = useAuthenticated()
   const api = useAPI()
-  const history = useHistory()
   const me = useQuery(["me"], async () => {
     const res = await api.get("/auth/me")
     if (res.status !== 200) {

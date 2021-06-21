@@ -2,6 +2,8 @@ import styled from "styled-components";
 import React, {FC, useMemo, useState} from "react";
 import useAPI from "../../functions";
 import {useQuery} from "react-query";
+import {useHistory} from "react-router-dom";
+import Button from "../../Components/Button";
 
 const ReqListDiv = styled.div`
   display: flex;
@@ -47,9 +49,15 @@ const StandardInput = styled.input`
   width: 95%;
 `
 
+const CustomButton = styled(Button)`
+  width: 95%;
+  margin-bottom: 15px;
+`
+
 const RequestsList: FC = () => {
   const [search, setSearch] = useState("")
   const api = useAPI()
+  const history = useHistory()
   const data = useQuery(["requests"], async () => {
     const res = await api.get<RequestData[]>("/requests/all")
     if (!api.error(res)) {
@@ -82,13 +90,15 @@ const RequestsList: FC = () => {
 
   return (
     <ReqListDiv>
+      <CustomButton onClick={() => history.push("/stress-test/create")}>New Stress Test</CustomButton>
+
       <label>
         <p style={{marginBottom: "10px"}}>Search</p>
         <StandardInput value={search} onChange={e => setSearch(e.target.value)} />
       </label>
       {DataList.map((el) => {
         return (
-          <ReqListItem key={`request-listitem-${el.id}`}>
+          <ReqListItem onClick={() => history.push(`/stress-test/${el.id}`)} key={`request-listitem-${el.id}`}>
             Request: {el.req_name}
           </ReqListItem>
         )

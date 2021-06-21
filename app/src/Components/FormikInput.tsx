@@ -88,11 +88,19 @@ const FormikInput: FC<props> = ({placeholder, wrapperClassName, className, label
 
   const errMsg = useMemo(() => {
     if (status && status[props.name]) {
-      return <ErrorMessage>status[props.name]</ErrorMessage>
+      let m = status[props.name].replace(props.name, label)
+      return <ErrorMessage>{m}</ErrorMessage>
     }
 
     return meta.touched && meta.error && <ErrorMessage>{meta.error}</ErrorMessage>
   }, [meta, status])
+
+  const isEmpty = (val: any) => {
+    if (typeof val === "number") {
+      return false
+    }
+    return _.isEmpty(val)
+  }
 
   return (
     <InputWrapper className={wrapperClassName ? wrapperClassName : ""}>
@@ -100,7 +108,7 @@ const FormikInput: FC<props> = ({placeholder, wrapperClassName, className, label
         <InputField
           {...props}
           {...field}
-          className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!_.isEmpty(field.value) && "has-val"}`}
+          className={`${className} ${errMsg && "error"} ${meta.touched && "touched"} ${!isEmpty(field.value) && "has-val"}`}
         />
         {label && <LabelText className={"label-holder"}>{label}</LabelText>}
         {errMsg}

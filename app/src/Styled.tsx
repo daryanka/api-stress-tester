@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 export const Theme = {
   black: "#272727",
   lightBlack: "#5d5d5d",
+  grey: "#d2d2d2",
   standardShadow: "0 0 11px rgba(0,0,0,0.15)",
   standardBorderRadius: "7px",
   errorColor: "#ec5133",
@@ -35,6 +36,11 @@ export const Section = styled.section`
 
 export const SectionHeader = styled.h2`
   font-size: 40px;
+  margin-top: 0;
+`
+
+export const SmallSectionHeader = styled.h3`
+  font-size: 30px;
   margin-top: 0;
 `
 

@@ -5,6 +5,7 @@ import {useHistory} from "react-router-dom";
 import {FormikHelpers} from "formik";
 import {useQueryClient} from "react-query";
 import {useAuthenticated} from "./Contexts/AuthenticationContext";
+import {useWebhook} from "./Contexts/WebHookContext";
 
 type Methods = "GET" | "PUT" | "PATCH" | "POST" | "DELETE";
 
@@ -18,6 +19,7 @@ const useAPI = () => {
   const history = useHistory();
   const queryClient = useQueryClient()
   const {setIsAuthenticated} = useAuthenticated()
+  const {closeConnection} = useWebhook()
 
   const send = async <T>(method: Methods, url: string, data?: any, additionalConfig?: AxiosRequestConfig) => {
     const headers: {
@@ -99,8 +101,6 @@ const useAPI = () => {
     if (res.status < 200 || res.status >= 300) {
       // Has error
       // Check if validation error
-
-      // Check if validatoin error
       if (res.status === 422) {
         // Add errors to obj
         const obj: { [key: string]: string } = {}
@@ -109,6 +109,7 @@ const useAPI = () => {
           obj[keys[i]] = res.data[keys[i]]
         }
 
+        console.log("status", obj)
         helpers.setStatus(obj)
         return true
       }
@@ -129,6 +130,7 @@ const useAPI = () => {
     queryClient.invalidateQueries(["me"])
     history.replace("/login")
     setIsAuthenticated(false)
+    closeConnection()
   }
 
   return {
@@ -226,6 +228,21 @@ export const SMToMinutes = (str: string) => {
     totalSeconds,
     PrettyString: PrettyString.join(", ")
   }
+}
+
+export const SecondsToPretty = (seconds: number) => {
+  let remaining = seconds
+  const PrettyString = []
+
+  if (remaining / 60 > 1) {
+    PrettyString.push(`${Math.floor(remaining / 60)} Minutes`)
+    remaining = remaining - Math.floor(remaining / 60) * 60
+  }
+  if (remaining > 0) {
+    PrettyString.push(`${remaining} Seconds`)
+  }
+
+  return PrettyString.join(", ")
 }
 
 export default useAPI
