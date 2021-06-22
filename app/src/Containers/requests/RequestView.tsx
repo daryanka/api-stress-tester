@@ -120,7 +120,7 @@ const RequestView: FC<propsI> = (props) => {
        </Pre>
       )
     }
-    return <Pre>No Payload provided</Pre>
+    return <Pre>No payload provided</Pre>
   }, [reqInfo.data])
 
   const fullEndpoint = useMemo(() => {
