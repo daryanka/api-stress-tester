@@ -2,7 +2,7 @@ import {useQuery} from "react-query";
 import useAPI from "../functions";
 import {useMemo} from "react";
 
-interface domainI {
+export interface domainI {
   id: number
   domain_url: string
   user_id: string,

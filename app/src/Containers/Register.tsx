@@ -36,7 +36,6 @@ const Register: FC = () => {
     })
 
     if (api.handleFormikError(res, helpers)) {
-      helpers.setTouched({})
       return
     }
 

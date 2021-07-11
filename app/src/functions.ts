@@ -119,6 +119,8 @@ const useAPI = () => {
         DEFAULT_ERROR: res?.data?.error
       })
 
+      helpers.setTouched({})
+
       return true
     }
 

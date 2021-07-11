@@ -31,7 +31,7 @@ func (i *requestOverviewService) All(userID int64) ([]request_overviews.RequestO
 	if err != nil && err != sql.ErrNoRows {
 		return nil, utils.StandardInternalServerError()
 	}
-	if res == nil {
+	if res == nil || len(res) == 0 {
 		return []request_overviews.RequestOverview{}, nil
 	}
 	return res, nil
@@ -49,7 +49,7 @@ func (i *requestOverviewService) GetSingle(id, userID int64) (*request_overviews
 	res, err := request_overviews.RequestOverviewDao.GetSingle(userID, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, utils.NewBadRequest("Request not found")
+			return nil, utils.NewNotFound("Request not found")
 		}
 		return nil, utils.StandardInternalServerError()
 	}

@@ -5,6 +5,7 @@ import RequestsList from "./ListRequests";
 import {Route, RouteChildrenProps, Switch} from "react-router-dom";
 import NewRequest from "./NewRequest";
 import RequestView from "./RequestView";
+import NoRequestSelected from "./NoRequestSelected";
 
 const Split = styled.div`
   display: grid;
@@ -32,12 +33,7 @@ const RequestData: FC<RouteChildrenProps> = (props) => {
   return (
     <RequestViewWrapper>
       <Switch>
-        <Route path={props.match?.path} exact render={() => {
-          return (
-            <Temp name={"homepage"}/>
-          )
-        }
-        }/>
+        <Route path={props.match?.path} exact component={NoRequestSelected}/>
         <Route path={`${props.match?.path}/create`} component={NewRequest} />
         <Route path={`${props.match?.path}/:id`} exact component={RequestView}/>
       </Switch>

@@ -10,7 +10,6 @@ import _ from "lodash";
 import {useRequestHook} from "../../Contexts/WebHookContext";
 import Button from "../../Components/Button";
 
-interface propsI extends RouteComponentProps<{ id: string }> {}
 
 interface RequestData {
   id: number
@@ -75,7 +74,24 @@ const Pre = styled.pre`
   font-size: 16px;
 `
 
-const RequestView: FC<propsI> = (props) => {
+const AverageTimeBox = styled.div`
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 30px;
+`
+
+const Box = styled.div`
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${props => props.theme.standardBorderRadius};
+  box-shadow: ${props => props.theme.standardShadow};
+  text-align: center;
+`
+
+const RequestView: FC<RouteComponentProps<{ id: string }>> = (props) => {
   const {fullRequest, sendCancel} = useRequestHook(props.match.params.id)
   const theme = useTheme() as themeType
   const api = useAPI()
@@ -86,7 +102,7 @@ const RequestView: FC<propsI> = (props) => {
     if (!err) {
       return res.data
     } else {
-      throw Error("")
+      throw res
     }
   })
 
@@ -116,8 +132,8 @@ const RequestView: FC<propsI> = (props) => {
     if (reqInfo.data?.payload) {
       return (
         <Pre>
-         {JSON.stringify(JSON.parse(reqInfo.data.payload), null, "    ")}
-       </Pre>
+          {JSON.stringify(JSON.parse(reqInfo.data.payload), null, "    ")}
+        </Pre>
       )
     }
     return <Pre>No payload provided</Pre>
@@ -159,7 +175,7 @@ const RequestView: FC<propsI> = (props) => {
     sendCancel()
     setTimeout(() => {
       reqInfo.refetch()
-    }, 100)
+    }, 1000)
   }
 
   return (
@@ -194,7 +210,7 @@ const RequestView: FC<propsI> = (props) => {
 
         <div
           style={{
-            height: "600px"
+            height: "630px"
           }}
         >
           <ResponsiveLineCanvas
@@ -204,7 +220,7 @@ const RequestView: FC<propsI> = (props) => {
                 data: chartData
               }
             ]}
-            margin={{top: 20, right: 20, bottom: 50, left: 50}}
+            margin={{top: 20, right: 20, bottom: 80, left: 50}}
             xScale={{type: "linear"}}
             yFormat=" >-.2f"
             curve="linear"
@@ -227,6 +243,17 @@ const RequestView: FC<propsI> = (props) => {
             tooltip={ToolTip}
           />
         </div>
+
+        {(reqInfo.data?.status === 2 || reqInfo.data?.status === 3) && (
+          <>
+            <SmallSectionHeader>Results</SmallSectionHeader>
+            <AverageTimeBox>
+              <Box>Average Response Time <br/> {reqInfo.data?.average_response_time.toFixed(2)}ms</Box>
+              <Box>Successful Requests <br/> {reqInfo.data?.successful_req}</Box>
+              <Box>Failed Requests <br/> {reqInfo.data?.failed_req}</Box>
+            </AverageTimeBox>
+          </>
+        )}
       </Section>
 
     </ContentLoader>

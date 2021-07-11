@@ -1,6 +1,7 @@
 import React, {createContext, FC, useContext, useState} from "react";
 import cookie from "js-cookie";
 import _ from "lodash";
+import {useQueryClient} from "react-query";
 
 type FullRequest =  {
   [key: string]: {
@@ -47,6 +48,7 @@ export const WebhookProvider: FC = (props) => {
 }
 
 export const useWebhook = () => {
+  const queryClient = useQueryClient()
   const {setRequests, setCon, con} = useContext(WebhookContext) as contextState
 
   const initialiseConnection = () => {
@@ -100,10 +102,13 @@ export const useWebhook = () => {
         case "REQUEST_FAILED":
         case "REQUEST_COMPLETE":
           // Signal new api request to get all data
-          const failedInfo = data.info as CompleteInfo
-          if (prev.hasOwnProperty(failedInfo.request_id)) {
-            prev[failedInfo.request_id].status = failedInfo.message
+          const newInfo = data.info as CompleteInfo
+          if (prev.hasOwnProperty(newInfo.request_id)) {
+            prev[newInfo.request_id].status = newInfo.message
           }
+          console.log("here", ["individual-request", newInfo.request_id])
+          queryClient.invalidateQueries(["individual-request", `${newInfo.request_id}`])
+          queryClient.invalidateQueries(["requests"])
           break
         default:
           break
@@ -121,8 +126,6 @@ export const useWebhook = () => {
 
 export const useRequestHook = (requestID: string) => {
   const {requests, con} = useContext(WebhookContext) as contextState
-
-  console.log("inside hook")
 
   const sendCancel = () => {
     const data = {

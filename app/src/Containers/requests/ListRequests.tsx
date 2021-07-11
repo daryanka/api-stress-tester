@@ -4,6 +4,7 @@ import useAPI from "../../functions";
 import {useQuery} from "react-query";
 import {useHistory} from "react-router-dom";
 import Button from "../../Components/Button";
+import useRequestList from "../../Hooks/RequestListHook";
 
 const ReqListDiv = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ const ReqListItem = styled.div`
   }
 `
 
-interface RequestData {
+export interface RequestData {
   id: number
   req_name: string
   user_id: number
@@ -58,12 +59,7 @@ const RequestsList: FC = () => {
   const [search, setSearch] = useState("")
   const api = useAPI()
   const history = useHistory()
-  const data = useQuery(["requests"], async () => {
-    const res = await api.get<RequestData[]>("/requests/all")
-    if (!api.error(res)) {
-      return res.data
-    }
-  })
+  const data = useRequestList()
 
   const DataList = useMemo(() => {
     if (data.data) {

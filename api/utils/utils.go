@@ -67,6 +67,15 @@ func NewBadRequest(message string, types ...string) RestErrI {
 	}
 }
 
+// NewNotFound returns RestErrI with a status code of 404
+func NewNotFound(message string, types ...string) RestErrI {
+	return &restErr{
+		Err:        message,
+		StatusCode: http.StatusNotFound,
+		Type:       strings.Join(types, ", "),
+	}
+}
+
 // NewUnprocessableEntity returns RestErrI with a status code of 422
 func NewUnprocessableEntity(message string, types ...string) RestErrI {
 	return &restErr{

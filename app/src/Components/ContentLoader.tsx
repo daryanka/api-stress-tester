@@ -175,7 +175,7 @@ const ContentLoaderDiv = styled.div`
   justify-content: center;
 `
 
-const ContentLoader: FC<{info: UseQueryResult}> = (props) => {
+const ContentLoader: FC<{info: UseQueryResult, notFoundMessage?: string}> = (props) => {
   if (props.info.isLoading) {
     return (
       <div>
@@ -203,6 +203,10 @@ const ContentLoader: FC<{info: UseQueryResult}> = (props) => {
     let message = "Something went wrong please try again later."
     if (typeof props.info.error === "string") {
       message = props.info.error
+    }
+    // @ts-ignore
+    if (props?.info?.error?.data?.status_code === 404) {
+      message = props.notFoundMessage ? props.notFoundMessage : "It seems what your looking for cannot be found."
     }
     return (
       <p>

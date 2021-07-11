@@ -4,6 +4,7 @@ import (
 	"github.com/daryanka/api-stress-tester/api/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func StartRouter() *gin.Engine {
@@ -16,6 +17,13 @@ func StartRouter() *gin.Engine {
 	corsDefault.AddAllowHeaders("authorization")
 	r.Use(cors.New(corsDefault))
 
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Invalid route",
+			"code":  http.StatusNotFound,
+		})
+	})
+
 	v1 := r.Group("/v1")
 	{
 		authRoutes := v1.Group("/auth")
@@ -23,7 +31,7 @@ func StartRouter() *gin.Engine {
 			authRoutes.POST("/login", UserController.Login)
 			authRoutes.POST("/register", UserController.Register)
 			authRoutes.POST("/verify", UserController.VerifyEmail)
-			authRoutes.GET("/me",  middleware.ValidateAuthToken(), UserController.Me)
+			authRoutes.GET("/me", middleware.ValidateAuthToken(), UserController.Me)
 		}
 
 		domainRoutes := v1.Group("/domains", middleware.ValidateAuthToken())

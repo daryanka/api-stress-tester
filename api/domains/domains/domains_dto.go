@@ -10,7 +10,7 @@ type Domain struct {
 }
 
 type CreateDomain struct {
-	DomainURL string `json:"domain_url" validate:"required"`
+	DomainURL string `json:"domain_url" validate:"required,max=254"`
 	UserID    int64  `json:"user_id"`
 	Token     string `json:"token"`
 	Verified  int    `json:"verified"`

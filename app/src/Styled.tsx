@@ -9,6 +9,7 @@ export const Theme = {
   standardBorderRadius: "7px",
   errorColor: "#ec5133",
   successColor: "#45d8a9",
+  orangeColor: "#ec8333",
   fontSize: "16px"
 }
 
@@ -28,10 +29,12 @@ export const PageHeading = styled.h1`
   margin: 0 0 40px 0;
 `
 
-export const Section = styled.section`
+export const Section = styled.section<{spaceTop?: boolean}>`
   font-size: 28px;
   color: ${(props) => props.theme.black};
   margin-bottom: 20px;
+  
+  ${props => props.spaceTop && `margin-top: 20px;`}
 `
 
 export const SectionHeader = styled.h2`
@@ -39,9 +42,11 @@ export const SectionHeader = styled.h2`
   margin-top: 0;
 `
 
-export const SmallSectionHeader = styled.h3`
+export const SmallSectionHeader = styled.h3<{center?: boolean}>`
   font-size: 30px;
   margin-top: 0;
+  
+  ${props => props.center && `text-align: center`}
 `
 
 export const ContentBox = styled.div`
@@ -50,7 +55,7 @@ export const ContentBox = styled.div`
   padding: 40px;
 `
 
-export const ButtonsRight = styled.div<{ spaceTop: boolean }>`
+export const ButtonsRight = styled.div<{ spaceTop?: boolean }>`
   width: 100%;
   display: flex;
   justify-content: flex-end;

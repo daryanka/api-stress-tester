@@ -40,7 +40,6 @@ const Login: FC = () => {
     })
 
     if (api.handleFormikError(res, helpers)) {
-      helpers.setTouched({})
       return
     }
 
@@ -49,7 +48,7 @@ const Login: FC = () => {
       expires: new Date(res.data.expires * 1000)
     })
 
-    history.replace("/dashboard")
+    history.replace("/stress-test")
   }
 
   return (

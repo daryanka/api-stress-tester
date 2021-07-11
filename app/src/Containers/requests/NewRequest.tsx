@@ -12,6 +12,7 @@ import useDomains from "../../Hooks/DomainsHook";
 import _ from "lodash";
 import FormikStandardError from "../../Components/FormikStandardError";
 import {useHistory} from "react-router-dom";
+import {useQueryClient} from "react-query";
 
 interface FormValues {
   req_name: string
@@ -96,6 +97,7 @@ const NewRequest: FC = () => {
   const {verifiedOnlyOption} = useDomains()
   const api = useAPI();
   const history = useHistory()
+  const queryClient = useQueryClient()
 
   const handleSubmit = async (values: FormValues, helpers: FormikHelpers<any>) => {
     const {totalSeconds} = SMToMinutes(values.duration)
@@ -112,10 +114,10 @@ const NewRequest: FC = () => {
     })
 
     if (!api.handleFormikError(res, helpers)) {
+      // Invalid List
+      queryClient.invalidateQueries(["requests"])
       // Push to view page
       history.push(`/stress-test/${res.data.id}`)
-    } else {
-      helpers.setTouched({})
     }
   }
 

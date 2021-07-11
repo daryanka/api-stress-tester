@@ -2,7 +2,6 @@ import React, {FC, useMemo} from "react";
 import styled from "styled-components";
 import {PageWrapper} from "../Styled";
 import {Link} from "react-router-dom";
-import {useQuery} from "react-query";
 import {useAuthenticated} from "../Contexts/AuthenticationContext";
 import useAPI from "../functions";
 
@@ -56,8 +55,6 @@ const Nav: FC = () => {
             </>
           ) : (
             <>
-              <ListItem to={"/"}>Home</ListItem>
-              <ListItem to={"/solution"}>Solution</ListItem>
               <ListItem to={"/login"}>Login</ListItem>
               <ListItem to={"/register"}>Register</ListItem>
             </>

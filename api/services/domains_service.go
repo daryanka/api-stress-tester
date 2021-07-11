@@ -3,7 +3,6 @@ package services
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/daryanka/api-stress-tester/api/domains/domains"
 	"github.com/daryanka/api-stress-tester/api/utils"
 	"github.com/google/uuid"
@@ -64,7 +63,6 @@ func (d *domainService) Create(req domains.CreateDomain) (int64, utils.RestErrI)
 }
 
 func (d *domainService) Verify(endpoint string, id, userId int64) utils.RestErrI {
-	fmt.Println("here", id, userId)
 	domain, err := domains.DomainsDao.GetSingle(id, userId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -73,9 +71,15 @@ func (d *domainService) Verify(endpoint string, id, userId int64) utils.RestErrI
 		return utils.StandardInternalServerError()
 	}
 
-	fmt.Println(domain)
+	fullURL := domain.DomainURL
+	// add slash if needed
+	if len(endpoint) > 0 && string(endpoint[0]) != "/" {
+		fullURL += "/" + endpoint
+	} else {
+		fullURL += endpoint
+	}
 
-	if e := makeVerifyDomainRequest(domain.DomainURL + endpoint, domain.Token); e != nil {
+	if e := makeVerifyDomainRequest(fullURL, domain.Token); e != nil {
 		return e
 	}
 
@@ -99,17 +103,19 @@ func makeVerifyDomainRequest(url, token string) utils.RestErrI {
 		Token string `json:"token"`
 	}
 
+	standardErr := utils.NewBadRequest("We were unable to make a request to the endpoint, please check that you have entered the correct details.", "INVALID URL")
+
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return utils.NewBadRequest("Unable to make request", "INVALID URL")
+		return standardErr
 	}
 
 	res, err := client.Do(req)
 
 	if err != nil {
-		return utils.StandardInternalServerError("UNABLE TO MAKE REQUEST")
+		return standardErr
 	}
 
 	b, err := ioutil.ReadAll(res.Body)
