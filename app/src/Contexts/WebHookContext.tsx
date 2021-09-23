@@ -47,6 +47,14 @@ export const WebhookProvider: FC = (props) => {
   )
 }
 
+const getSocketURL = () => {
+  if (process.env.NODE_ENV === "PROD") {
+    return "wss://api-api-tester.daryanamin.co.uk/v1/ws"
+  } else {
+    return "ws://localhost:8081/v1/ws"
+  }
+}
+
 export const useWebhook = () => {
   const queryClient = useQueryClient()
   const {setRequests, setCon, con} = useContext(WebhookContext) as contextState
@@ -54,7 +62,7 @@ export const useWebhook = () => {
   const initialiseConnection = () => {
     // Send
     const token = cookie.get("token")
-    const socket = new WebSocket("ws://localhost:8081/v1/ws", token)
+    const socket = new WebSocket(getSocketURL(), token)
     socket.onopen = (ev) => {
       console.log(ev)
       setCon(socket)

@@ -6,6 +6,7 @@ import FormikInput from "../../Components/FormikInput";
 import useAPI from "../../functions";
 import Button from "../../Components/Button";
 import FormikStandardError from "../../Components/FormikStandardError";
+import {useHistory} from "react-router-dom";
 
 const validURL = (str: string) => {
   const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
@@ -45,6 +46,7 @@ const formSchema = Yup.object({
 })
 
 const NewDomain: FC = () => {
+  const history = useHistory();
   const api = useAPI()
   const handleSubmit = async (values: { domain_url: string }, helpers: FormikHelpers<{ domain_url: string }>) => {
     helpers.setStatus({})
@@ -64,12 +66,12 @@ const NewDomain: FC = () => {
     }
 
 
-    const res = await api.post<{id: number}>("/v1/domains/create", {
+    const res = await api.post<{id: number}>("/domains/create", {
       domain_url: origin
     })
 
     if (!api.handleFormikError(res, helpers)) {
-
+      history.push(`/domains/${res.data.id}`)
     }
   }
 

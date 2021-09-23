@@ -42,7 +42,6 @@ const App: FC = () => {
   )
 }
 
-// TODO complete function public route only
 const HandlePublicOnly: FC = (props) => {
   const history = useHistory()
   if (cookie.get("token")) {

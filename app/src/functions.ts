@@ -33,12 +33,11 @@ const useAPI = () => {
     let baseURL = ""
 
     switch (process.env.NODE_ENV) {
-      case "dev":
+      case "DEV":
         baseURL = `http://localhost:8081/v1${url}`;
         break;
-      case "prod":
-        // TODO add prod when ready
-        baseURL = `http://localhost:8081/v1${url}`;
+      case "PROD":
+        baseURL = `https://api-api-tester.daryanamin.co.uk/v1${url}`;
         break;
       default:
         baseURL = `http://localhost:8081/v1${url}`;

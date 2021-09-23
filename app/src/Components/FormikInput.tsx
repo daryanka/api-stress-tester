@@ -71,6 +71,7 @@ export const LabelText = styled.p`
   white-space: nowrap;
   bottom: 10px;
   font-style: italic;
+  height: 20px;
 `
 
 export const Label = styled.label`

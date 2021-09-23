@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"github.com/daryanka/api-stress-tester/api/clients"
 	"github.com/daryanka/api-stress-tester/api/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 )
 
 func StartRouter() *gin.Engine {
@@ -13,7 +15,12 @@ func StartRouter() *gin.Engine {
 	r.Use(gin.Logger())
 
 	corsDefault := cors.DefaultConfig()
-	corsDefault.AllowOrigins = []string{"http://localhost:5000"}
+	if os.Getenv("MODE") == "PROD" {
+		corsDefault.AllowOrigins = []string{"https://api-tester.daryanamin.co.uk"}
+	} else {
+		corsDefault.AllowOrigins = []string{"http://localhost:5000"}
+	}
+
 	corsDefault.AddAllowHeaders("authorization")
 	r.Use(cors.New(corsDefault))
 
@@ -21,6 +28,17 @@ func StartRouter() *gin.Engine {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid route",
 			"code":  http.StatusNotFound,
+		})
+	})
+
+	r.GET("/health", func(c *gin.Context) {
+		dbOk := "OK"
+		if err := clients.DB.Ping(); err != nil {
+			dbOk = "ERROR"
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "OK",
+			"database": dbOk,
 		})
 	})
 

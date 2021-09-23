@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=dev webpack-dev-server",
-    "build-prod": "cross-env NODE_ENV=production webpack",
-    "build-beta": "cross-env NODE_ENV=beta webpack"
+    "start": "cross-env NODE_ENV=DEV webpack-dev-server",
+    "build-prod": "cross-env NODE_ENV=PROD webpack",
+    "build-beta": "cross-env NODE_ENV=BETA webpack"
   },
   "author": "",
   "license": "ISC",
