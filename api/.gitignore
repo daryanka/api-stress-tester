@@ -1,3 +1,4 @@
 artisan.exe
 errorlog.log
 prod.env
+.env
