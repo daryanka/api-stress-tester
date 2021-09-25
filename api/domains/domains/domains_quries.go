@@ -10,7 +10,7 @@ SELECT d.id AS id,
        COALESCE(COUNT(ro.id), 0) AS num_requests
 FROM domains d
          LEFT JOIN request_overviews ro on d.id = ro.domain_id
-AND d.user_id = ? GROUP BY d.id;
+WHERE d.user_id = ? GROUP BY d.id;
 `
 	queryGetSingle = `
 SELECT d.id AS id,

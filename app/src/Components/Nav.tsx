@@ -48,7 +48,7 @@ const Nav: FC = () => {
         <List>
           {isAuthenticated ? (
             <>
-              <ListItem to={"/dashboard"}>Dashboard</ListItem>
+              {/*<ListItem to={"/dashboard"}>Dashboard</ListItem>*/}
               <ListItem to={"/domains"}>Domains</ListItem>
               <ListItem to={"/stress-test"}>Stress Tests</ListItem>
               <LogoutItem onClick={logout}>Logout</LogoutItem>
