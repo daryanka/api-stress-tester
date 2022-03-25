@@ -44,6 +44,7 @@ const useAPI = () => {
         break;
     }
 
+    baseURL = `https://api-api-tester.daryanamin.co.uk/v1${url}`;
 
     const config = _.merge(additionalConfig ? additionalConfig : {}, {
       method: method,

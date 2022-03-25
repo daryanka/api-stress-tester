@@ -48,11 +48,12 @@ export const WebhookProvider: FC = (props) => {
 }
 
 const getSocketURL = () => {
-  if (process.env.NODE_ENV === "PROD") {
-    return "wss://api-api-tester.daryanamin.co.uk/v1/ws"
-  } else {
-    return "ws://localhost:8081/v1/ws"
-  }
+  // if (process.env.NODE_ENV === "PROD") {
+  //   return "wss://api-api-tester.daryanamin.co.uk/v1/ws"
+  // } else {
+  //   return "ws://localhost:8081/v1/ws"
+  // }
+  return "wss://api-api-tester.daryanamin.co.uk/v1/ws"
 }
 
 export const useWebhook = () => {

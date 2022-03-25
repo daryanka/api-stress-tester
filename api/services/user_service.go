@@ -2,7 +2,6 @@ package services
 
 import (
 	"database/sql"
-	"github.com/daryanka/api-stress-tester/api/clients"
 	"github.com/daryanka/api-stress-tester/api/domains/user"
 	"github.com/daryanka/api-stress-tester/api/utils"
 	"github.com/google/uuid"
@@ -35,9 +34,9 @@ func (i *userService) Login(req *user.ReqLogin) (*utils.TokenWithClaims, utils.R
 	}
 
 	// Check verified email
-	if foundUser.EmailVerified == 0 {
-		return nil, utils.NewBadRequest("Account not active, please check your inbox for a verification email", "EMAIL_NOT_ACTIVE")
-	}
+	//if foundUser.EmailVerified == 0 {
+	//	return nil, utils.NewBadRequest("Account not active, please check your inbox for a verification email", "EMAIL_NOT_ACTIVE")
+	//}
 
 	token, err := utils.CreateAuthToken(foundUser.ID)
 	if err != nil {
@@ -73,14 +72,15 @@ func (i *userService) Register(req *user.ReqRegister) utils.RestErrI {
 		EmailToken: EmailToken,
 		Password:   string(hashedPassword),
 	})
+	go user.UserDao.VerifyEmail(req.Email)
 
 	if err != nil {
 		return utils.StandardInternalServerError()
 	}
 
-	go clients.SendMail("register.html", req.Email, "Welcome Email", struct {
-		Token string
-	}{EmailToken})
+	//go clients.SendMail("register.html", req.Email, "Welcome Email", struct {
+	//	Token string
+	//}{EmailToken})
 
 	return nil
 }
